@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .sidebar-gradient { background:#1e293b; border-right:1px solid #334155; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow:0 10px 25px rgba(0,0,0,.1); }
+    .nav-btn { transition:.2s; }
+    .nav-btn.active { background:#4f46e5; color:white; }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen">
+
+<div class="flex min-h-screen">
+
+<!-- SIDEBAR -->
+<aside class="w-72 sidebar-gradient text-slate-300 p-6 hidden lg:flex flex-col fixed h-full z-20">
+
+  <div class="flex items-center gap-3 mb-10">
+    <div class="bg-indigo-600 p-2.5 rounded-xl text-white">
+      <i class="fas fa-brain"></i>
+    </div>
+    <h1 class="text-xl font-bold text-white">ShikshaManthan</h1>
+  </div>
+
+  <nav class="space-y-2 flex-1">
+    <button class="nav-btn active w-full p-3 rounded-xl flex gap-3">
+      <i class="fas fa-columns w-5"></i> Overview
+    </button>
+
+    <button onclick="openMyLFAs()" class="nav-btn w-full p-3 rounded-xl flex gap-3 hover:bg-slate-700 hover:text-white">
+      <i class="fas fa-folder-open w-5"></i> My LFAs
+    </button>
+
+    <button onclick="uploadExistingLFA()" class="nav-btn w-full p-3 rounded-xl flex gap-3 hover:bg-slate-700 hover:text-white">
+      <i class="fas fa-cloud-upload-alt w-5"></i> Upload Existing LFA
+    </button>
+
+    <div class="pt-4 mt-4 border-t border-slate-700">
+      <button onclick="editProfile()" class="nav-btn w-full p-3 rounded-xl flex gap-3 hover:bg-slate-700 hover:text-white">
+        <i class="fas fa-user-cog w-5"></i> Profile
+      </button>
+    </div>
+  </nav>
+
+  <button onclick="logoutUser()" class="w-full p-3 rounded-xl flex gap-3 text-red-400 hover:bg-red-500/10">
+    <i class="fas fa-sign-out-alt w-5"></i> Go to Homepage
+  </button>
+</aside>
+
+<!-- MAIN -->
+<main class="flex-1 lg:ml-72 p-6 md:p-10 max-w-7xl mx-auto w-full">
+
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h2 id="userName" class="text-3xl font-bold text-slate-800"></h2>
+      <p class="text-slate-500">Your learning framework workspace</p>
+    </div>
+
+    <div class="flex items-center gap-4 bg-white p-2 pr-6 rounded-full border">
+      <img id="avatar" class="w-10 h-10 rounded-full"/>
+      <div>
+        <p id="userRole" class="text-xs font-bold text-indigo-600"></p>
+        <p id="userOrg" class="text-xs text-slate-500"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK CARDS -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <div class="bg-white rounded-2xl p-6 border card-hover">
+      <h3 class="text-sm text-slate-500">Region</h3>
+      <p id="region" class="text-xl font-bold"></p>
+    </div>
+
+    <div onclick="openMyLFAs()" class="bg-indigo-600 text-white rounded-2xl p-6 cursor-pointer card-hover">
+      <h3 class="text-sm opacity-80">My LFAs</h3>
+      <p class="text-xl font-bold">View Saved Projects</p>
+    </div>
+
+    <div onclick="uploadExistingLFA()" class="bg-white border-dashed border-2 rounded-2xl p-6 cursor-pointer card-hover text-center">
+      <i class="fas fa-upload text-2xl text-indigo-500 mb-2"></i>
+      <p class="font-bold">Upload Existing LFA</p>
+      <p class="text-xs text-slate-500">PDF / DOCX</p>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<!-- MODALS + FILE INPUT -->
+<div id="modalRoot"></div>
+<input type="file" id="lfaFileInput" accept=".pdf,.docx" hidden>
+
+<script>
+/* ================= AUTH ================= */
+const user = JSON.parse(localStorage.getItem("currentUser"));
+if(!user) location.href="index.html";
+
+document.getElementById("userName").innerText = `Welcome, ${user.name.split(" ")[0]}`;
+document.getElementById("avatar").src = user.avatar;
+document.getElementById("userRole").innerText = user.role;
+document.getElementById("userOrg").innerText = user.organization;
+document.getElementById("region").innerText = user.region;
+
+/* ================= LFA ================= */
+let lfas = JSON.parse(localStorage.getItem("lfas")) || [];
+
+/* ================= MODAL ================= */
+function openModal(html){
+  modalRoot.innerHTML = `
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-6 w-full max-w-lg">
+      ${html}
+    </div>
+  </div>`;
+}
+function closeModal(){ modalRoot.innerHTML=""; }
+
+/* ================= MY LFAs ================= */
+function openMyLFAs(){
+  if(lfas.length===0){
+    openModal(`<h3 class="font-bold mb-4">My LFAs</h3><p>No LFAs found</p><button onclick="closeModal()">Close</button>`);
+    return;
+  }
+  openModal(`
+    <h3 class="font-bold mb-4">My LFAs</h3>
+    ${lfas.map(l=>`
+      <div class="border p-3 rounded mb-2">
+        <p class="font-semibold">${l.title}</p>
+        <p class="text-xs text-slate-500">${l.createdAt}</p>
+      </div>`).join("")}
+    <button onclick="closeModal()">Close</button>
+  `);
+}
+
+/* ================= PROFILE ================= */
+function editProfile() {
+  openModal(`
+    <h3 class="text-lg font-bold mb-4">Edit Profile</h3>
+
+    <form id="profileForm" class="space-y-3">
+      
+      <div>
+        <label class="block text-sm font-medium text-slate-600 mb-1">
+          Name
+        </label>
+        <input 
+          type="text" 
+          id="profileName"
+          value="${user.name || ""}"
+          class="w-full border rounded p-2"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-600 mb-1">
+          State
+        </label>
+        <input 
+          type="text" 
+          id="profileRegion"
+          value="${user.region || ""}"
+          class="w-full border rounded p-2"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-600 mb-1">
+          Status
+        </label>
+        <select 
+          id="profileStatus"
+          class="w-full border rounded p-2"
+        >
+          <option value="Student" ${user.status === "Student" ? "selected" : ""}>Student</option>
+          <option value="Teacher" ${user.status === "Teacher" ? "selected" : ""}>Teacher</option>
+          <option value="CRP" ${user.status === "CRP" ? "selected" : ""}>CRP</option>
+          <option value="DEO" ${user.status === "DEO" ? "selected" : ""}>
+            DEO
+          </option>
+        </select>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4">
+        <button 
+          type="button" 
+          onclick="closeModal()"
+          class="px-4 py-2 border rounded"
+        >
+          Cancel
+        </button>
+        <button 
+          type="submit"
+          class="px-4 py-2 bg-indigo-600 text-white rounded"
+        >
+          Save
+        </button>
+      </div>
+
+    </form>
+  `);
+
+  // Attach submit handler
+  document
+    .getElementById("profileForm")
+    .addEventListener("submit", saveProfile);
+}
+
+function saveProfile(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("profileName").value.trim();
+  const region = document.getElementById("profileRegion").value.trim();
+  const status = document.getElementById("profileStatus").value;
+
+  if (!name || !region) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  // Update user object
+  user.name = name;
+  user.region = region;
+  user.status = status;
+
+  // Persist changes
+  localStorage.setItem("currentUser", JSON.stringify(user));
+
+  closeModal();
+
+  // Update dashboard UI instantly (no full reload required)
+  document.getElementById("userName").innerText =
+    `Welcome, ${user.name.split(" ")[0]}`;
+  document.getElementById("region").innerText = user.region;
+}
+
+/* ================= UPLOAD ================= */
+lfaFileInput.onchange=e=>{
+  const f=e.target.files[0];
+  if(!f) return;
+  lfas.push({title:f.name,createdAt:new Date().toLocaleDateString(),status:"Draft"});
+  localStorage.setItem("lfas",JSON.stringify(lfas));
+  alert("LFA uploaded");
+};
+function uploadExistingLFA(){ lfaFileInput.click(); }
+
+/* ================= LOGOUT ================= */
+async function logoutUser() {
+  try {
+    // Optional: backend / firebase logout
+    if (window.logoutAuth) {
+      await window.logoutAuth();
+    }
+  } catch (err) {
+    console.warn("Auth logout failed, continuing local logout", err);
+  }
+
+  // 🔥 HARD RESET SESSION
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("lfas");
+  sessionStorage.clear();
+
+  // 🔥 PREVENT BACK BUTTON ISSUE
+  window.location.replace("index.html");
+}
+
+</script>
+
+</body>
+</html>

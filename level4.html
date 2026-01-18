@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Level 4 – Stakeholder Mapping | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/progress.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Background Pattern */
+    .bg-grid-pattern {
+        background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        opacity: 0.1;
+    }
+
+    /* AI Animations */
+    @keyframes pulse-ring {
+        0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    .ai-thinking { animation: pulse-ring 2s infinite; }
+
+    /* Custom Scrollbar for Map */
+    .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    
+    /* Progress Bar Override */
+    #progressBar, .progress-bar-fill { background-color: #4f46e5 !important; }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen relative text-slate-800">
+
+<div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+
+<div id="header" class="relative z-20 sticky top-0 bg-white/90 backdrop-blur shadow-sm"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+  <section class="lg:col-span-2 bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 relative overflow-hidden flex flex-col h-full">
+    
+    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500"></div>
+
+    <div class="mb-6">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wide">Level 4</span>
+        <span class="text-slate-400 text-sm font-medium">System Actors</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 leading-tight">
+        Who needs to act?
+      </h1>
+      <p class="text-slate-500 mt-2 text-sm sm:text-base">
+        Drag stakeholders into the system map. Change requires action at multiple levels.
+      </p>
+    </div>
+
+    <div class="mb-8">
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Available Actors</p>
+      
+      <div id="stakeholderPool" class="flex flex-wrap gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100 min-h-[80px] items-center">
+        <div draggable="true" ondragstart="drag(event)" class="stakeholder-chip" data-name="Teacher">👨‍🏫 Teacher</div>
+        <div draggable="true" ondragstart="drag(event)" class="stakeholder-chip" data-name="Head Master">🎓 HM</div>
+        <div draggable="true" ondragstart="drag(event)" class="stakeholder-chip" data-name="CRP / BRP">🛠️ CRP / BRP</div>
+        <div draggable="true" ondragstart="drag(event)" class="stakeholder-chip" data-name="District Officer">🏢 District Officer</div>
+        <div draggable="true" ondragstart="drag(event)" class="stakeholder-chip" data-name="Parent">👨‍👩‍👧 Parent</div>
+        <div draggable="true" ondragstart="drag(event)" class="stakeholder-chip" data-name="SMC Member">🤝 SMC Member</div>
+      </div>
+    </div>
+
+    <div class="flex-grow">
+      <div class="flex justify-between items-end mb-3">
+         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">System Ecosystem</p>
+         <p class="text-xs text-indigo-500 font-medium animate-pulse hidden" id="dragHint">Drop here to map</p>
+      </div>
+
+      <div id="systemMap"
+        ondrop="drop(event)"
+        ondragover="allowDrop(event)"
+        class="relative w-full h-64 bg-indigo-50/50 border-2 border-dashed border-indigo-200 rounded-2xl flex items-center justify-center transition-all duration-300 hover:border-indigo-400 hover:bg-indigo-50">
+        
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+            <div class="w-[90%] h-[90%] border border-indigo-400 rounded-full absolute"></div>
+            <div class="w-[65%] h-[65%] border border-indigo-400 rounded-full absolute"></div>
+            <div class="w-[40%] h-[40%] border border-indigo-400 rounded-full absolute bg-indigo-100/30"></div>
+        </div>
+
+        <div class="absolute text-xs font-bold text-indigo-300 pointer-events-none uppercase tracking-widest z-0">
+           The Program
+        </div>
+
+        <div id="droppedContainer" class="relative z-10 flex flex-wrap gap-4 justify-center p-6 w-full h-full content-center">
+            <span id="emptyStateText" class="text-sm text-slate-400 pointer-events-none">
+                Drag stakeholders into the orbit
+            </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
+      <button onclick="goBack()"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-medium transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back
+      </button>
+
+      <button id="continueBtn"
+        disabled
+        onclick="saveAndNext()"
+        class="px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/30">
+        Continue
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+  </section>
+
+  <aside class="lg:col-span-1 space-y-6">
+    
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+
+        <div id="aiAvatarContainer" class="relative mx-auto w-20 h-20 mb-4 flex items-center justify-center">
+            <div id="aiPulse" class="absolute inset-0 rounded-full border-2 border-indigo-100"></div>
+            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center text-2xl shadow-lg text-white z-10 transition-transform duration-300" id="aiFace">
+                🤖
+            </div>
+        </div>
+
+        <h2 class="text-lg font-bold text-slate-800">System Analysis</h2>
+        <div class="h-1 w-10 bg-indigo-100 mx-auto rounded-full my-3"></div>
+        
+        <div id="aiFeedback" class="text-sm text-slate-500 italic min-h-[3rem] transition-colors duration-300">
+          "Awaiting input. Who needs to act for this change?"
+        </div>
+    </div>
+
+    <div class="bg-slate-900 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
+        <div class="flex justify-between items-end mb-2">
+            <span class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Map Complexity</span>
+            <span id="scoreText" class="text-2xl font-bold text-indigo-400">0/2</span>
+        </div>
+        
+        <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div id="complexityBar" class="h-full bg-gradient-to-r from-indigo-400 to-violet-400 w-0 transition-all duration-500 ease-out"></div>
+        </div>
+        
+        <div class="mt-4 flex gap-2 text-xs text-slate-400">
+           <span>🔗</span>
+           <span>Connect at least 2 key actors</span>
+        </div>
+    </div>
+
+  </aside>
+
+</main>
+
+<style>
+.stakeholder-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stakeholder-chip:hover {
+  border-color: #818cf8; /* Indigo-400 */
+  color: #4338ca;        /* Indigo-700 */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.stakeholder-chip:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+/* Style inside the map */
+#droppedContainer .stakeholder-chip {
+  background: #eef2ff; /* Indigo-50 */
+  border-color: #6366f1; /* Indigo-500 */
+  color: #312e81;        /* Indigo-900 */
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Remove button on hover inside map */
+#droppedContainer .stakeholder-chip::after {
+  content: "✕";
+  font-size: 10px;
+  margin-left: 8px;
+  opacity: 0.5;
+}
+#droppedContainer .stakeholder-chip:hover::after {
+  opacity: 1;
+  color: red;
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+/* ================= INIT ================= */
+
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(h => {
+    document.getElementById("header").innerHTML = h.replace(/teal/g, "indigo");
+    if(typeof setProgress === 'function') setProgress(42);
+  });
+
+window.onload = () => {
+    loadData();
+
+    // Guard
+    if (!isLevel3Complete()) {
+        // Uncomment for production
+        // window.location.href = "level3.html";
+        // return;
+    }
+
+    // Reset Level 4 State
+    lfaData.stakeholders = [];
+    saveData();
+    updateState();
+};
+
+/* ================= GUARD ================= */
+
+function isLevel3Complete() {
+  if(typeof lfaData === 'undefined') return false;
+  return lfaData.successDefinition && lfaData.successDefinition.length > 20;
+}
+
+/* ================= DRAG & DROP LOGIC ================= */
+
+function allowDrop(ev) {
+  ev.preventDefault();
+  document.getElementById("systemMap").classList.add("bg-indigo-50", "border-indigo-400");
+  document.getElementById("dragHint").classList.remove("hidden");
+}
+
+/* Reset style on drag leave (optional enhancement) */
+document.getElementById("systemMap").addEventListener("dragleave", () => {
+    document.getElementById("systemMap").classList.remove("bg-indigo-50", "border-indigo-400");
+    document.getElementById("dragHint").classList.add("hidden");
+});
+
+function drag(ev) {
+  // Transfer the text content
+  ev.dataTransfer.setData("text", ev.target.innerText);
+  ev.dataTransfer.effectAllowed = "copy";
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  const rawText = ev.dataTransfer.getData("text");
+  
+  // Clean text (remove any existing close icons if dragging from within)
+  // But here we only drag from pool, so rawText is fine.
+  // We identify chips by text content for simplicity in this demo.
+  
+  // Reset Map Style
+  document.getElementById("systemMap").classList.remove("bg-indigo-50", "border-indigo-400");
+  document.getElementById("dragHint").classList.add("hidden");
+
+  // Logic
+  if (!lfaData.stakeholders.includes(rawText)) {
+    lfaData.stakeholders.push(rawText);
+    addStakeholderToMap(rawText);
+    updateState();
+  }
+}
+
+function addStakeholderToMap(name) {
+  const container = document.getElementById("droppedContainer");
+  const emptyText = document.getElementById("emptyStateText");
+  
+  if(emptyText) emptyText.style.display = 'none';
+
+  const chip = document.createElement("div");
+  chip.className = "stakeholder-chip";
+  chip.innerText = name;
+  chip.title = "Click to remove";
+
+  chip.onclick = () => {
+    // Remove Animation
+    chip.style.transform = "scale(0)";
+    setTimeout(() => {
+        chip.remove();
+        lfaData.stakeholders = lfaData.stakeholders.filter(s => s !== name);
+        updateState();
+        
+        if(lfaData.stakeholders.length === 0 && emptyText) {
+            emptyText.style.display = 'block';
+        }
+    }, 200);
+  };
+
+  container.appendChild(chip);
+}
+
+/* ================= STATE & AI FEEDBACK ================= */
+
+function updateState() {
+  const count = lfaData.stakeholders.length;
+  
+  // Update Complexity Meter
+  const score = Math.min(count, 2); // Max score 2 for visual simplicity
+  const widthPct = (score / 2) * 100;
+  
+  document.getElementById("complexityBar").style.width = widthPct + "%";
+  document.getElementById("scoreText").innerText = count + "/2+";
+
+  // AI Logic
+  const aiFace = document.getElementById("aiFace");
+  const aiPulse = document.getElementById("aiPulse");
+  
+  if (count === 0) {
+    updateFeedback("⚠️ Select at least one stakeholder to begin mapping.", "text-slate-500");
+    lockContinue();
+    updateVisuals("🤔", false);
+    return;
+  }
+
+  if (count === 1) {
+    updateFeedback("🟡 Good start. Change usually requires more than one actor.", "text-yellow-600");
+    lockContinue();
+    updateVisuals("🧐", true); // Thinking
+    return;
+  }
+
+  // Success
+  updateFeedback("✅ Strong system map! Multiple actors identified.", "text-green-600");
+  unlockContinue();
+  updateVisuals("🤝", false, true); // Success
+}
+
+function updateVisuals(emoji, isThinking, isSuccess = false) {
+    const aiFace = document.getElementById("aiFace");
+    const aiPulse = document.getElementById("aiPulse");
+
+    aiFace.innerText = emoji;
+    
+    if(isThinking) {
+        aiPulse.classList.add("ai-thinking");
+        aiPulse.classList.remove("bg-green-100");
+    } else if(isSuccess) {
+        aiPulse.classList.remove("ai-thinking");
+        aiPulse.classList.add("bg-green-100");
+    } else {
+        aiPulse.classList.remove("ai-thinking", "bg-green-100");
+    }
+}
+
+function updateFeedback(msg, colorClass) {
+    const fb = document.getElementById("aiFeedback");
+    fb.innerText = msg;
+    fb.className = `text-sm font-medium min-h-[3rem] transition-colors duration-300 ${colorClass}`;
+}
+
+/* ================= PROGRESS ================= */
+
+function updateProgress(understanding) {
+  // Logic handled in updateState mostly, but we can sync global bar here
+  const base = 42;
+  const range = 14;
+  // If count >= 2, understanding is 100%
+  // else proportional
+  // This is optional if using setProgress in init.
+}
+
+/* ================= BUTTON STATES ================= */
+
+function unlockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = false;
+  b.classList.remove("bg-slate-200", "text-slate-400");
+  b.classList.add("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
+}
+
+function lockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = true;
+  b.classList.add("bg-slate-200", "text-slate-400");
+  b.classList.remove("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
+}
+
+/* ================= NAV ================= */
+
+function saveAndNext() {
+  if (lfaData.stakeholders.length < 2) {
+    alert("Please map more than one stakeholder.");
+    return;
+  }
+  saveData();
+  window.location.href = "level5.html";
+}
+
+function goBack() {
+  window.location.href = "level3.html";
+}
+</script>
+
+</body>
+</html>

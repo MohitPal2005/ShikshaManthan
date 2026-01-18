@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review Program Logic | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/progress.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Background Pattern */
+    .bg-grid-pattern {
+        background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        opacity: 0.1;
+    }
+
+    /* Logic Flow Connector Lines */
+    .connector-line {
+        position: absolute;
+        background-color: #cbd5e1;
+        z-index: 0;
+    }
+    
+    /* Desktop Horizontal Line */
+    @media (min-width: 1024px) {
+        .connector-line {
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            transform: translateY(-50%);
+        }
+    }
+    
+    /* Mobile Vertical Line */
+    @media (max-width: 1023px) {
+        .connector-line {
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            transform: translateX(-50%);
+        }
+    }
+
+    /* Card Animations */
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-card { animation: fade-in-up 0.5s ease-out forwards; }
+    
+    /* Progress Bar Override */
+    #progressBar, .progress-bar-fill { background-color: #4f46e5 !important; }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen relative text-slate-800">
+
+<div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+
+<div id="header" class="relative z-20 sticky top-0 bg-white/90 backdrop-blur shadow-sm"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-20 space-y-10">
+
+  <section class="text-center space-y-3 animate-card">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wide border border-green-200">
+        🎉 Framework Complete
+    </div>
+    <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
+      Your Program Logic Blueprint
+    </h1>
+    <p class="text-slate-500 max-w-2xl mx-auto">
+      Review how your problem, interventions, and outcomes connect before exporting your final Logical Framework Analysis (LFA).
+    </p>
+  </section>
+
+  <section class="relative">
+    
+    <div class="absolute inset-0 mx-4 lg:mx-0 py-10 lg:py-0 lg:px-10 pointer-events-none">
+        <div class="connector-line"></div>
+    </div>
+
+    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.1s;">
+            <div class="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-red-200 text-lg flex-shrink-0">1</div>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">The Problem</h3>
+            
+            <div class="flex-grow overflow-hidden">
+                <p id="revProblem" class="text-sm font-medium text-slate-800 leading-relaxed break-words whitespace-pre-wrap">
+                    Loading...
+                </p>
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.2s;">
+            <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-indigo-200 text-lg flex-shrink-0">2</div>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Change Agents</h3>
+            
+            <div class="space-y-3 flex-grow overflow-hidden">
+                <div>
+                    <span class="text-xs text-indigo-500 font-semibold">Stakeholders:</span>
+                    <ul id="revStakeholders" class="text-sm text-slate-700 list-disc list-inside mt-1 marker:text-indigo-300 break-words"></ul>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <span class="text-xs text-indigo-500 font-semibold">New Practices:</span>
+                    <ul id="revPractices" class="text-xs text-slate-600 list-disc list-inside mt-1 marker:text-indigo-300 break-words"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.3s;">
+            <div class="w-10 h-10 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-violet-200 text-lg flex-shrink-0">3</div>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">The Outcome</h3>
+            
+            <div class="flex-grow overflow-hidden flex flex-col">
+                <p id="revOutcome" class="text-sm font-medium text-slate-800 leading-relaxed mb-3 break-words whitespace-pre-wrap">
+                    Loading...
+                </p>
+                <div class="bg-violet-50 p-2 rounded text-xs text-violet-700 border border-violet-100 italic mt-auto break-words">
+                    "<span id="revSuccess"></span>"
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.4s;">
+            <div class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-green-200 text-lg flex-shrink-0">4</div>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Indicators</h3>
+            
+            <div class="flex-grow overflow-hidden">
+                <ul id="revIndicators" class="text-sm text-slate-700 space-y-2 break-words"></ul>
+            </div>
+        </div>
+
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-8 animate-card" style="animation-delay: 0.5s;">
+    
+    <div class="md:col-span-1 bg-slate-900 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-center h-full">
+        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-indigo-500 rounded-full blur-3xl opacity-20"></div>
+        
+        <h2 class="text-lg font-bold text-indigo-200 mb-1">System Alignment</h2>
+        <p class="text-xs text-slate-400 mb-6">Based on logical flow coherence</p>
+        
+        <div class="relative w-full aspect-square max-w-[150px] mx-auto mb-4 flex items-center justify-center">
+            <div class="w-full h-full rounded-full border-8 border-slate-700 relative"></div>
+            <div class="absolute inset-0 rounded-full border-8 border-indigo-500 border-t-transparent border-l-transparent -rotate-45"></div>
+            <div class="absolute text-4xl font-bold text-white" id="alignmentText">0%</div>
+        </div>
+        
+        <div class="text-center">
+            <span id="alignmentLabel" class="px-3 py-1 rounded-full bg-indigo-600 text-xs font-bold uppercase tracking-wide">Calculating...</span>
+        </div>
+        
+        <div id="alignmentBar" class="hidden"></div> 
+    </div>
+
+    <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <div class="bg-white border border-green-200 rounded-xl p-5 shadow-sm h-full flex flex-col">
+            <div class="flex items-center gap-2 mb-3 text-green-700 font-bold flex-shrink-0">
+                <span class="text-xl">🛡️</span> Strengths
+            </div>
+            <ul id="aiStrengths" class="text-xs text-slate-600 space-y-2 break-words flex-grow"></ul>
+        </div>
+
+        <div class="bg-white border border-red-200 rounded-xl p-5 shadow-sm h-full flex flex-col">
+            <div class="flex items-center gap-2 mb-3 text-red-600 font-bold flex-shrink-0">
+                <span class="text-xl">⚠️</span> Attention Needed
+            </div>
+            <ul id="aiGaps" class="text-xs text-slate-600 space-y-2 break-words flex-grow"></ul>
+        </div>
+
+        <div class="bg-white border border-yellow-200 rounded-xl p-5 shadow-sm h-full flex flex-col">
+            <div class="flex items-center gap-2 mb-3 text-yellow-700 font-bold flex-shrink-0">
+                <span class="text-xl">💡</span> Suggestions
+            </div>
+            <ul id="aiSuggestions" class="text-xs text-slate-600 space-y-2 break-words flex-grow"></ul>
+        </div>
+
+    </div>
+
+  </section>
+
+  <section class="flex justify-between items-center pt-6 border-t border-slate-200 animate-card" style="animation-delay: 0.6s;">
+    <button onclick="goBack()"
+      class="flex items-center gap-2 px-6 py-3 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium transition-colors">
+      ← Make Edits
+    </button>
+
+    <button onclick="goNext()"
+      class="group relative px-8 py-4 rounded-full bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all overflow-hidden">
+      <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
+      Export & Share LFA →
+    </button>
+  </section>
+
+</main>
+
+<script>
+// 1. INIT
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(h => {
+    document.getElementById("header").innerHTML = h.replace(/teal/g, "indigo");
+    loadData();
+    if(typeof setProgress === 'function') setProgress(100);
+    populateReview();
+  });
+
+// 2. POPULATE DATA
+function populateReview() {
+  // Text Fields
+  document.getElementById("revProblem").innerText = lfaData.problem || "Not defined";
+  document.getElementById("revOutcome").innerText = lfaData.studentOutcome || "Not defined";
+  document.getElementById("revSuccess").innerText = lfaData.successDefinition || "Not defined";
+
+  // Lists
+  fillList("revStakeholders", lfaData.stakeholders);
+  fillList("revPractices", Object.values(lfaData.practiceChanges || {}));
+  fillList("revIndicators", (lfaData.indicators || []).map(i => `✅ ${i.text}`));
+
+  // Analytics
+  calculateAlignment();
+  generateAISummary();
+}
+
+function fillList(id, items) {
+  const ul = document.getElementById(id);
+  ul.innerHTML = "";
+  if(!items || items.length === 0) {
+      ul.innerHTML = "<li class='text-slate-400 italic'>None recorded</li>";
+      return;
+  }
+  items.forEach(i => {
+    const li = document.createElement("li");
+    // Simple logic to keep emoji if present
+    li.innerText = i.startsWith("✅") ? i : i.replace("✅ ", ""); 
+    ul.appendChild(li);
+  });
+}
+
+// 3. LOGIC ANALYTICS
+function calculateAlignment() {
+  let score = 0;
+  if (lfaData.problem && lfaData.problem.length > 20) score += 15;
+  if (lfaData.studentOutcome && lfaData.studentOutcome.length > 20) score += 15;
+  if (lfaData.successDefinition) score += 15;
+  if (lfaData.stakeholders && lfaData.stakeholders.length >= 2) score += 15;
+  if (lfaData.practiceChanges && Object.keys(lfaData.practiceChanges).length > 0) score += 15;
+  if (lfaData.indicators && lfaData.indicators.length > 0) score += 25;
+
+  // Cap at 100
+  if(score > 100) score = 100;
+
+  // Update Visuals
+  document.getElementById("alignmentText").innerText = score + "%";
+  
+  // Label Logic
+  const label = document.getElementById("alignmentLabel");
+  if(score >= 80) {
+      label.innerText = "Excellent Alignment";
+      label.className = "px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold uppercase tracking-wide";
+  } else if (score >= 50) {
+      label.innerText = "Good Start";
+      label.className = "px-3 py-1 rounded-full bg-yellow-500 text-white text-xs font-bold uppercase tracking-wide";
+  } else {
+      label.innerText = "Needs Refinement";
+      label.className = "px-3 py-1 rounded-full bg-red-500 text-white text-xs font-bold uppercase tracking-wide";
+  }
+}
+
+// 4. AI GENERATION
+function generateAISummary() {
+  const strengths = [];
+  const gaps = [];
+  const suggestions = [];
+
+  // Problem Logic
+  if (lfaData.problem && lfaData.problem.length > 50) strengths.push("Problem definition is detailed.");
+  else gaps.push("Problem definition is brief.");
+
+  // Logic Chain
+  if (lfaData.indicators && lfaData.indicators.length > 0) strengths.push("Evidence layer (Indicators) is present.");
+  else gaps.push("Missing indicators to measure success.");
+
+  // System
+  if (lfaData.stakeholders && lfaData.stakeholders.length >= 2) strengths.push("Multi-stakeholder approach adopted.");
+  else gaps.push("System map is too simple (1 actor).");
+
+  // Suggestions
+  suggestions.push("Ensure your indicators directly measure the student behavior mentioned in the Outcome.");
+  suggestions.push("Check if the budget (Level 8) matches these activities.");
+
+  fillList("aiStrengths", strengths);
+  fillList("aiGaps", gaps);
+  fillList("aiSuggestions", suggestions);
+}
+
+// 5. NAV
+function goBack() {
+  window.location.href = "level7.html";
+}
+
+function goNext() {
+  // Normally leads to Export page
+  window.location.href = "export.html"; 
+  // alert("Ready for Export!");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Program Setup | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/progress.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Background Pattern */
+    .bg-grid-pattern {
+        background-size: 40px 40px;
+        background-image: linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    }
+
+    /* Floating Blobs Animation */
+    @keyframes float {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    .blob {
+        position: absolute;
+        filter: blur(80px);
+        opacity: 0.4;
+        z-index: -1;
+        animation: float 10s infinite ease-in-out;
+    }
+
+    /* --- FORCE PROGRESS BAR THEME --- */
+    /* This overrides the default teal/green colors likely in your progress.js */
+    #progressBar, .progress-bar-fill {
+        background-color: #4f46e5 !important; /* Indigo-600 */
+    }
+    .progress-step-active {
+        background-color: #4f46e5 !important;
+        border-color: #4f46e5 !important;
+        color: white !important;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 relative min-h-screen overflow-x-hidden text-slate-800">
+
+<div class="absolute inset-0 bg-grid-pattern z-0 pointer-events-none fixed"></div>
+<div class="blob bg-indigo-300 w-96 h-96 top-0 -left-20 rounded-full"></div>
+<div class="blob bg-violet-300 w-96 h-96 bottom-0 -right-20 rounded-full"></div>
+
+<div id="header" class="relative z-10 sticky top-0 bg-white/80 backdrop-blur-md z-50"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto mt-6 mb-20 p-4 sm:p-6">
+
+  <div class="bg-white/90 backdrop-blur-xl border border-white/50 rounded-3xl shadow-xl shadow-indigo-100/50 p-6 sm:p-8 lg:p-10 animate-[fade-in_0.5s_ease-out]">
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-6 border-b border-slate-100 gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-800 tracking-tight">
+          Tell us about your program
+        </h1>
+        <p class="text-slate-500 mt-2 text-sm sm:text-base">Define the core context to generate your tailored framework.</p>
+      </div>
+      
+      <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-semibold shadow-sm w-fit">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+        </span>
+        Foundation Step
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+
+      <div class="lg:col-span-2 space-y-8">
+
+        <div class="group">
+          <label class="block text-sm font-semibold text-slate-700 mb-2 ml-1">Program Name</label>
+          <input
+            type="text"
+            placeholder="e.g. Rural Girls' Education Initiative"
+            class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all duration-300 shadow-sm group-hover:shadow-md"
+            oninput="lfaData.program.name=this.value; updateFrameworkStatus();"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-3 ml-1">Theme</label>
+          <div class="flex flex-wrap gap-3">
+
+            <button onclick="selectTheme(this, 'FLN')"
+              class="theme-btn flex-1 sm:flex-none justify-center px-6 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:border-indigo-300 hover:bg-slate-50 transition-all duration-200 flex items-center gap-3 font-medium shadow-sm">
+              <span class="p-1 bg-blue-100 rounded text-xs">📘</span> FLN
+            </button>
+
+            <button onclick="selectTheme(this,'Mentoring')"
+              class="theme-btn flex-1 sm:flex-none justify-center px-6 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:border-indigo-300 hover:bg-slate-50 transition-all duration-200 flex items-center gap-3 font-medium shadow-sm">
+              <span class="p-1 bg-green-100 rounded text-xs">👥</span> Mentoring
+            </button>
+
+            <button onclick="selectTheme(this,'Leadership')"
+              class="theme-btn flex-1 sm:flex-none justify-center px-6 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:border-indigo-300 hover:bg-slate-50 transition-all duration-200 flex items-center gap-3 font-medium shadow-sm">
+              <span class="p-1 bg-yellow-100 rounded text-xs">⭐</span> Leadership
+            </button>
+
+          </div>
+          <p id="themeHint" class="text-xs text-indigo-500 font-medium mt-3 ml-1 hidden animate-[fade-in_0.3s]">
+            ✨ Excellent choice. We are calibrating indicators for this theme.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-3 ml-1">Geography</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            
+            <div class="relative">
+              <select id="stateSelect"
+                class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 cursor-pointer"
+                onchange="handleStateChange(this.value)">
+                <option value="">Select State</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Maharashtra">Maharashtra</option>
+              </select>
+              <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">▼</div>
+            </div>
+
+            <div class="relative">
+              <select id="districtSelect"
+                class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl appearance-none focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                onchange="lfaData.program.geography.district=this.value; updateFrameworkStatus();"
+                disabled>
+                <option value="">Select District</option>
+                </select>
+              <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">▼</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-3 ml-1">System Level</label>
+          <div class="flex flex-wrap gap-4">
+
+            <button onclick="selectLevel(this, 'School')"
+              class="level-btn w-full sm:w-auto px-8 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:border-indigo-300 hover:bg-slate-50 transition-all duration-200 font-medium flex justify-center items-center gap-2 shadow-sm">
+              🏫 School
+            </button>
+
+            <button onclick="selectLevel(this,'Cluster')"
+              class="level-btn w-full sm:w-auto px-8 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:border-indigo-300 hover:bg-slate-50 transition-all duration-200 font-medium flex justify-center items-center gap-2 shadow-sm">
+              🔗 Cluster
+            </button>
+
+            <button onclick="selectLevel(this,'Block')"
+              class="level-btn w-full sm:w-auto px-8 py-3 rounded-xl border border-slate-200 text-slate-600 bg-white hover:border-indigo-300 hover:bg-slate-50 transition-all duration-200 font-medium flex justify-center items-center gap-2 shadow-sm">
+              🧩 Block
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="space-y-8 lg:mt-8">
+
+        <div id="frameworkBox" class="relative overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-slate-500 transition-all duration-500">
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-3">
+              <div id="lockIcon" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-sm">🔒</div>
+              <span class="font-bold text-lg">Logic Framework</span>
+            </div>
+            <p class="text-sm leading-relaxed opacity-80">
+              Complete the context on the left to unlock the LFA generator.
+              <br><br>
+              <span class="text-xs uppercase tracking-wide font-semibold opacity-60">Structure Preview:</span><br>
+              Problem → Root Causes → Solutions → Outcomes
+            </p>
+          </div>
+        </div>
+
+        <div class="rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-6 text-white shadow-lg relative overflow-hidden group">
+          <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white opacity-10 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
+          
+          <p class="text-indigo-100 text-sm font-medium mb-1">Upcoming Step</p>
+          <h3 class="text-xl font-bold mb-4">Level 1: Problem Definition</h3>
+          
+          <div class="flex items-center gap-2 text-sm text-indigo-100/80 bg-black/10 w-fit px-3 py-1 rounded-lg backdrop-blur-sm">
+             🔒 Locked
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <button
+            id="continueBtn"
+            type="button"
+            onclick="saveAndNext()"
+            disabled
+            class="w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg transform active:scale-95 flex items-center justify-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed bg-slate-200 text-slate-400">
+            <span>Continue to Level 1</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+          <p id="formError" class="text-xs text-center text-red-500 mt-3 font-medium hidden animate-pulse">
+            * Please complete all required fields
+          </p>
+        </div>
+
+      </div>
+    </div>
+  
+  </div>
+</main>
+
+<script>
+  // 1. Dynamic Header Loading & Theme Correction
+  fetch("components/header.html")
+    .then(res => res.text())
+    .then(data => {
+        const headerEl = document.getElementById("header");
+        // Hacky Fix: Replace any 'teal' classes with 'indigo' in the fetched HTML string
+        // This ensures the header matches even if the original file isn't updated
+        const indigoData = data.replaceAll("teal-600", "indigo-600")
+                               .replaceAll("teal-50", "indigo-50")
+                               .replaceAll("bg-teal", "bg-indigo");
+        headerEl.innerHTML = indigoData;
+    });
+
+  // 2. Geography Data & Logic
+  const districtData = {
+    "Madhya Pradesh": ["Bhopal", "Indore", "Jabalpur", "Gwalior", "Ujjain"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Varanasi", "Noida", "Agra"],
+    "Rajasthan": ["Jaipur", "Udaipur", "Kota", "Jodhpur", "Ajmer"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Thane"]
+  };
+
+  function handleStateChange(state) {
+    lfaData.program.geography.state = state;
+    
+    // Get District Select Element
+    const districtSelect = document.getElementById("districtSelect");
+    
+    // Clear existing options
+    districtSelect.innerHTML = '<option value="">Select District</option>';
+    
+    if (state && districtData[state]) {
+        // Enable and Populate
+        districtSelect.disabled = false;
+        districtData[state].forEach(district => {
+            const option = document.createElement("option");
+            option.value = district;
+            option.textContent = district;
+            districtSelect.appendChild(option);
+        });
+    } else {
+        // Disable if no state
+        districtSelect.disabled = true;
+    }
+    
+    updateFrameworkStatus();
+  }
+
+  // 3. Theme & Level Selection (Visual Fix)
+  function selectTheme(btn, theme) {
+    lfaData.program.theme = theme;
+    
+    // Reset ALL buttons in this group
+    document.querySelectorAll(".theme-btn").forEach(b => {
+        b.classList.remove("bg-indigo-50", "border-indigo-600", "text-indigo-700", "ring-2", "ring-indigo-200");
+        b.classList.add("bg-white", "text-slate-600", "border-slate-200");
+    });
+
+    // Highlight THIS button
+    btn.classList.remove("bg-white", "text-slate-600", "border-slate-200");
+    btn.classList.add("bg-indigo-50", "border-indigo-600", "text-indigo-700", "ring-2", "ring-indigo-200");
+
+    document.getElementById("themeHint").classList.remove("hidden");
+    updateFrameworkStatus(); 
+  }
+
+  function selectLevel(btn, level) {
+    lfaData.program.level = level;
+
+    // Reset ALL buttons in this group
+    document.querySelectorAll(".level-btn").forEach(b => {
+        b.classList.remove("bg-indigo-50", "border-indigo-600", "text-indigo-700", "ring-2", "ring-indigo-200");
+        b.classList.add("bg-white", "text-slate-600", "border-slate-200");
+    });
+
+    // Highlight THIS button
+    btn.classList.remove("bg-white", "text-slate-600", "border-slate-200");
+    btn.classList.add("bg-indigo-50", "border-indigo-600", "text-indigo-700", "ring-2", "ring-indigo-200");
+
+    updateFrameworkStatus(); 
+  }
+
+  // 4. Form Validation Logic
+  function isContextComplete() {
+    const p = lfaData.program;
+    return (
+      p.name.trim() !== "" &&
+      p.theme.trim() !== "" &&
+      p.level.trim() !== "" &&
+      p.geography.state.trim() !== ""
+    );
+  }
+
+  function updateFrameworkStatus() {
+    const box = document.getElementById("frameworkBox");
+    const btn = document.getElementById("continueBtn");
+    const error = document.getElementById("formError");
+
+    if (isContextComplete()) {
+      // UNLOCK STATE
+      box.classList.remove("border-dashed", "border-slate-300", "bg-slate-50", "text-slate-500");
+      box.classList.add("border-solid", "border-indigo-200", "bg-indigo-50", "text-indigo-900", "shadow-inner");
+
+      // Update Box Content
+      box.innerHTML = `
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg animate-[bounce_1s]">🔓</div>
+          <span class="font-bold text-lg text-indigo-800">Framework Ready</span>
+        </div>
+        <p class="text-sm text-indigo-700/80">
+          Context detected. AI prompts loaded for <strong>${lfaData.program.theme}</strong>.
+        </p>
+        <div class="h-1 w-full bg-indigo-200 rounded-full mt-3 overflow-hidden">
+            <div class="h-full bg-indigo-500 w-full animate-[slide-right_1s_ease-out]"></div>
+        </div>
+      `;
+
+      // Enable Button
+      btn.disabled = false;
+      btn.classList.remove("bg-slate-200", "text-slate-400");
+      btn.classList.add("bg-indigo-600", "text-white", "hover:bg-indigo-700", "hover:-translate-y-1", "hover:shadow-indigo-500/40");
+
+      if (error) error.classList.add("hidden");
+
+    } else {
+      // LOCKED STATE
+      btn.disabled = true;
+      btn.classList.add("bg-slate-200", "text-slate-400");
+      btn.classList.remove("bg-indigo-600", "text-white", "hover:bg-indigo-700", "hover:-translate-y-1", "hover:shadow-indigo-500/40");
+      
+      if (error) error.classList.remove("hidden");
+    }
+  }
+
+
+  function saveAndNext() {
+    if (!isContextComplete()) {
+      // Shake effect on error
+      const btn = document.getElementById("continueBtn");
+      btn.classList.add("animate-ping");
+      setTimeout(() => btn.classList.remove("animate-ping"), 300);
+      return false;
+    }
+
+    applyContextLogic();
+    saveData();
+    window.location.href = "level1.html";
+  }
+
+  window.onload = () => {
+    // Attempt to set progress bar color if progress.js exposes an element
+    // The CSS style block in <head> handles the main override, but we call setProgress here.
+    if(typeof setProgress === "function") setProgress(1);
+    
+    loadData();
+    updateFrameworkStatus();
+  };
+</script>
+
+</body>
+</html>

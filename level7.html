@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Level 7 – Indicators | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/progress.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Background Pattern */
+    .bg-grid-pattern {
+        background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        opacity: 0.1;
+    }
+
+    /* AI Animations */
+    @keyframes pulse-ring {
+        0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    .ai-thinking { animation: pulse-ring 2s infinite; }
+
+    /* Progress Bar Override */
+    #progressBar, .progress-bar-fill { background-color: #4f46e5 !important; }
+    
+    /* Animation for New Cards */
+    @keyframes slide-down {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-down { animation: slide-down 0.3s ease-out forwards; }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen relative text-slate-800">
+
+<div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+
+<div id="header" class="relative z-20 sticky top-0 bg-white/90 backdrop-blur shadow-sm"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+  <section class="lg:col-span-2 bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 relative overflow-hidden flex flex-col h-full">
+    
+    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500"></div>
+
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wide">Level 7 • Final Step</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 leading-tight">
+        How will you know this is working?
+      </h1>
+      <p class="text-slate-500 mt-2 text-sm sm:text-base">
+        Define <strong>indicators</strong> (evidence) that show whether the Student Outcome is actually happening.
+      </p>
+    </div>
+
+    <div id="indicatorContainer" class="space-y-6">
+        </div>
+
+    <button onclick="addIndicator()"
+      class="mt-6 w-full py-4 border-2 border-dashed border-indigo-200 rounded-xl text-indigo-500 font-medium hover:bg-indigo-50 hover:border-indigo-400 transition-all flex items-center justify-center gap-2 group">
+      <span class="text-xl group-hover:scale-110 transition-transform">+</span> Add another indicator
+    </button>
+
+    <div class="mt-10 flex items-center justify-between border-t border-slate-100 pt-6">
+      <button onclick="goBack()"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-medium transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back
+      </button>
+
+      <button id="continueBtn"
+        disabled
+        onclick="saveAndNext()"
+        class="px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/30">
+        Finish & Review 🎉
+      </button>
+    </div>
+
+  </section>
+
+  <aside class="lg:col-span-1 space-y-6">
+    
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+
+        <div id="aiAvatarContainer" class="relative mx-auto w-20 h-20 mb-4 flex items-center justify-center">
+            <div id="aiPulse" class="absolute inset-0 rounded-full border-2 border-indigo-100"></div>
+            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center text-2xl shadow-lg text-white z-10 transition-transform duration-300" id="aiFace">
+                🤖
+            </div>
+        </div>
+
+        <h2 class="text-lg font-bold text-slate-800">Measurement Check</h2>
+        <div class="h-1 w-10 bg-indigo-100 mx-auto rounded-full my-3"></div>
+        
+        <div id="aiFeedback" class="text-sm text-slate-500 italic min-h-[3rem] transition-colors duration-300">
+          "Indicators should measure change, not just activity."
+        </div>
+    </div>
+
+    <div class="bg-slate-900 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
+        <h3 class="font-semibold text-indigo-300 mb-4 flex items-center gap-2">
+            <span>📏</span> The Gold Standard
+        </h3>
+        
+        <ul class="space-y-3 text-sm text-slate-300">
+            <li class="flex gap-2">
+                <span class="text-green-400">✓</span> Track student behavior or learning
+            </li>
+            <li class="flex gap-2">
+                <span class="text-green-400">✓</span> Show evidence of practice change
+            </li>
+            <li class="flex gap-2">
+                <span class="text-green-400">✓</span> Are observable or measurable
+            </li>
+        </ul>
+
+        <div class="mt-4 pt-4 border-t border-slate-700">
+             <p class="text-xs font-bold text-red-400 uppercase tracking-widest mb-2">Avoid (The Activity Trap)</p>
+             <p class="text-xs text-slate-400">
+                Don't just count "Number of trainings" or "Number of meetings". That is an output, not an outcome.
+             </p>
+        </div>
+    </div>
+
+  </aside>
+
+</main>
+
+<script>
+/* ================= INIT ================= */
+
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(h => {
+    document.getElementById("header").innerHTML = h.replace(/teal/g, "indigo");
+    
+    loadData();
+
+    // Guard
+    if (!isLevel6Complete()) {
+        // Uncomment in production
+        // window.location.href = "level6.html";
+        // return;
+    }
+
+    if(typeof setProgress === 'function') setProgress(84);
+
+    lfaData.indicators = lfaData.indicators || [];
+    renderIndicators();
+  });
+
+/* ================= GUARD ================= */
+
+function isLevel6Complete() {
+  if(typeof lfaData === 'undefined') return false;
+  return lfaData.activities && lfaData.activities.length > 0;
+}
+
+/* ================= RENDER ================= */
+
+function renderIndicators() {
+  const container = document.getElementById("indicatorContainer");
+  container.innerHTML = "";
+
+  if (lfaData.indicators.length === 0) {
+    addIndicator();
+    return;
+  }
+
+  lfaData.indicators.forEach((ind, idx) => {
+    container.appendChild(createIndicatorBox(ind, idx));
+  });
+  
+  evaluateState();
+}
+
+function createIndicatorBox(indicator, index) {
+  const box = document.createElement("div");
+  box.className = "animate-slide-down border border-slate-200 rounded-xl p-5 bg-white shadow-sm hover:border-indigo-300 transition-all relative group";
+
+  // Trash Icon
+  const deleteBtn = lfaData.indicators.length > 1 ? `
+    <button onclick="removeIndicator(${index})" class="absolute top-4 right-4 text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 z-10">
+        🗑️
+    </button>` : '';
+
+  // Outcome Text (for visual reference)
+  // We use the stored Student Outcome or a default placeholder
+  const outcomeText = lfaData.studentOutcome || "Student Outcome (Defined in Level 2)";
+  const truncatedOutcome = outcomeText.length > 50 ? outcomeText.substring(0, 50) + "..." : outcomeText;
+
+  box.innerHTML = `
+    ${deleteBtn}
+    <div class="flex flex-col gap-3">
+        
+        <div class="flex items-center gap-2 text-xs font-bold text-indigo-500 uppercase tracking-wide mb-1">
+             <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+             Measuring Evidence For:
+        </div>
+
+        <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-sm text-indigo-900 flex items-start gap-2">
+            <span class="text-lg">🎯</span>
+            <span class="italic opacity-80">${truncatedOutcome}</span>
+        </div>
+
+        <div class="relative mt-2">
+            <textarea
+            rows="3"
+            placeholder="e.g. 70% of students answer comprehension questions correctly during monthly reviews."
+            class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 resize-none transition-all"
+            oninput="updateIndicator(${index}, 'text', this.value)"
+            id="input-${index}"
+            >${indicator.text || ""}</textarea>
+
+            <div id="status-${index}" class="absolute right-3 bottom-3 text-lg opacity-0 transition-opacity"></div>
+        </div>
+    </div>
+  `;
+
+  return box;
+}
+
+/* ================= ACTIONS ================= */
+
+function addIndicator() {
+  // Auto-link to the main student outcome
+  lfaData.indicators.push({ outcome: lfaData.studentOutcome, text: "" });
+  renderIndicators();
+}
+
+function removeIndicator(index) {
+    lfaData.indicators.splice(index, 1);
+    renderIndicators();
+}
+
+function updateIndicator(index, field, value) {
+  lfaData.indicators[index][field] = value.trim();
+  
+  // Local Validation for the specific input
+  const statusEl = document.getElementById(`status-${index}`);
+  const activityWords = ["number of", "count", "sessions", "trainings", "meetings", "workshops"];
+  
+  if (value.length === 0) {
+      statusEl.style.opacity = '0';
+  } else if (value.length < 15) {
+      statusEl.innerHTML = '⚠️';
+      statusEl.className = "absolute right-3 bottom-3 text-lg text-yellow-500 transition-opacity opacity-100";
+  } else if (activityWords.some(w => value.toLowerCase().includes(w))) {
+      statusEl.innerHTML = '🛑';
+      statusEl.className = "absolute right-3 bottom-3 text-lg text-red-500 transition-opacity opacity-100";
+  } else {
+      statusEl.innerHTML = '✅';
+      statusEl.className = "absolute right-3 bottom-3 text-lg text-green-500 transition-opacity opacity-100";
+  }
+
+  evaluateState();
+}
+
+/* ================= STATE EVALUATION ================= */
+
+function evaluateState() {
+  const activityWords = ["number of", "count", "sessions", "trainings", "meetings", "workshops"];
+  let hasActivityTrap = false;
+  let hasVague = false;
+
+  for (const ind of lfaData.indicators) {
+    if (!ind.text || ind.text.length < 15) {
+      hasVague = true;
+    }
+    if (activityWords.some(w => ind.text && ind.text.toLowerCase().includes(w))) {
+      hasActivityTrap = true;
+    }
+  }
+
+  if (hasVague) {
+    updateFeedback("⚠️ Some indicators are too vague. Describe the evidence clearly.", "text-yellow-600", "🧐");
+    lockContinue();
+    return;
+  }
+
+  if (hasActivityTrap) {
+    updateFeedback("🛑 Avoid counting activities (e.g., 'Number of trainings'). Measure the CHANGE instead.", "text-red-500", "🙅‍♂️");
+    lockContinue();
+    return;
+  }
+
+  updateFeedback("✅ Indicators are outcome-linked and measure real change. Ready to review!", "text-green-600", "🎉");
+  unlockContinue();
+}
+
+function updateFeedback(msg, colorClass, emoji) {
+    const fb = document.getElementById("aiFeedback");
+    const face = document.getElementById("aiFace");
+    const pulse = document.getElementById("aiPulse");
+    
+    fb.innerText = msg;
+    fb.className = `text-sm font-medium min-h-[3rem] transition-colors duration-300 ${colorClass}`;
+    
+    face.innerText = emoji;
+    
+    if(emoji === "🎉") {
+        pulse.classList.remove("ai-thinking");
+        pulse.classList.add("bg-green-100");
+    } else {
+        pulse.classList.add("ai-thinking");
+        pulse.classList.remove("bg-green-100");
+    }
+}
+
+/* ================= BUTTON STATES ================= */
+
+function unlockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = false;
+  b.classList.remove("bg-slate-200", "text-slate-400");
+  b.classList.add("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
+}
+
+function lockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = true;
+  b.classList.add("bg-slate-200", "text-slate-400");
+  b.classList.remove("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
+}
+
+/* ================= NAV ================= */
+
+function saveAndNext() {
+  saveData();
+  window.location.href = "review.html";
+}
+
+function goBack() {
+  window.location.href = "level6.html";
+}
+</script>
+
+</body>
+</html>

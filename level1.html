@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Level 1 – Problem Definition | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/progress.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Background Pattern */
+    .bg-grid-pattern {
+        background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        opacity: 0.1;
+    }
+
+    /* AI Pulse Animation */
+    @keyframes pulse-ring {
+        0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    .ai-thinking { animation: pulse-ring 2s infinite; }
+
+    /* Progress Bar Override */
+    #progressBar, .progress-bar-fill { background-color: #4f46e5 !important; }
+    .progress-step-active { background-color: #4f46e5 !important; border-color: #4f46e5 !important; color: white !important; }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen relative text-slate-800">
+
+<div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+
+<div id="header" class="relative z-20 sticky top-0 bg-white/90 backdrop-blur shadow-sm"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+  <section class="lg:col-span-2 bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 relative overflow-hidden">
+    
+    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500"></div>
+
+    <div class="mb-6">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wide">Level 1</span>
+        <span class="text-slate-400 text-sm">Problem Definition</span>
+      </div>
+      <h1 id="aiQuestion" class="text-2xl sm:text-3xl font-bold text-slate-800 leading-tight transition-all duration-300">
+        What is the core problem in the system?
+      </h1>
+      <p id="aiSubtext" class="text-slate-500 mt-2 text-sm sm:text-base transition-all duration-300">
+        Describe the problem area, not solutions or activities
+      </p>
+    </div>
+
+    <div class="relative group">
+      <textarea
+        id="problemInput"
+        rows="6"
+        placeholder="Type here..."
+        class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-inner"
+        oninput="handleAIFlow(this.value)"
+      ></textarea>
+      <div class="absolute bottom-4 right-4 transition-opacity duration-300 opacity-50 text-xs text-slate-400" id="typingStatus">
+        Waiting for input...
+      </div>
+    </div>
+
+    <div class="mt-6 bg-indigo-50/50 border border-indigo-100 p-5 rounded-xl flex gap-4 items-start">
+      <div class="text-2xl pt-1">💡</div>
+      <div>
+        <h4 class="font-semibold text-indigo-900 text-sm mb-2">Guidance Tips</h4>
+        <ul id="tipsList" class="space-y-1.5 text-sm text-slate-600">
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Link the problem to students’ experience</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Avoid activities, training, or solutions</li>
+          <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Focus on what is not working</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
+      <button onclick="goBack()"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-medium transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back
+      </button>
+
+      <button id="continueBtn"
+        disabled
+        onclick="saveAndNext()"
+        class="px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/30">
+        Continue
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+  </section>
+
+  <aside class="lg:col-span-1 space-y-6">
+    
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 text-center relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+
+        <div id="aiAvatarContainer" class="relative mx-auto w-20 h-20 mb-4 flex items-center justify-center">
+            <div id="aiPulse" class="absolute inset-0 rounded-full border-2 border-indigo-100"></div>
+            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center text-2xl shadow-lg text-white z-10 transition-transform duration-300" id="aiFace">
+                🤖
+            </div>
+        </div>
+
+        <h2 class="text-lg font-bold text-slate-800">AI Assistant</h2>
+        <div class="h-1 w-10 bg-indigo-100 mx-auto rounded-full my-3"></div>
+        
+        <div id="aiFeedback" class="text-sm text-slate-500 italic min-h-[3rem] transition-colors duration-300">
+          "I'm listening. Start describing the problem..."
+        </div>
+    </div>
+
+    <div class="bg-slate-900 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8"></div>
+        
+        <div class="flex justify-between items-end mb-2">
+            <span class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Understanding</span>
+            <span id="scoreText" class="text-2xl font-bold text-indigo-400">0%</span>
+        </div>
+        
+        <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div id="understandingBar" class="h-full bg-gradient-to-r from-indigo-400 to-violet-400 w-0 transition-all duration-500 ease-out"></div>
+        </div>
+        
+        <p class="text-xs text-slate-500 mt-3">
+            Keep refining your input until the AI fully grasps the context.
+        </p>
+    </div>
+
+  </aside>
+
+</main>
+
+<script>
+/* ================= INIT ================= */
+
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(h => {
+    // Inject and fix theme colors in header
+    document.getElementById("header").innerHTML = h.replace(/teal/g, "indigo");
+
+    // Load Data
+    loadData();
+
+    // Check Guard
+    if (!isSetupComplete()) {
+        // Uncomment in production
+        // window.location.href = "setup.html";
+        // return;
+    }
+
+    // Set Header Progress (Step 1 -> Level 1)
+    if(typeof setProgress === 'function') setProgress(1); // Assuming 1 corresponds to "Problem" in your progress logic
+  });
+
+/* ================= SETUP GUARD ================= */
+
+function isSetupComplete() {
+  // Ensure lfaData exists
+  if(typeof lfaData === 'undefined') return false;
+  const p = lfaData.program;
+  return p && p.name && p.theme && p.level && p.geography;
+}
+
+/* ================= AI STATE ================= */
+
+let ai = {
+  understanding: 0,   // 0–100
+  stage: 1            // 1=raw, 2=narrowing, 3=clear
+};
+
+/* ================= CORE AI FLOW ================= */
+
+function handleAIFlow(text) {
+  text = text.trim();
+  lfaData.problem = text;
+
+  const typingStatus = document.getElementById("typingStatus");
+  const aiPulse = document.getElementById("aiPulse");
+  const aiFace = document.getElementById("aiFace");
+
+  // Visuals: User is typing
+  typingStatus.innerText = text.length > 0 ? "Analyzing..." : "Waiting for input...";
+  typingStatus.classList.add("text-indigo-500");
+  
+  // AI Thinking Animation
+  aiPulse.classList.add("ai-thinking");
+
+  // Reset / Stage 1
+  if (text.length < 20) {
+    ai.stage = 1;
+    ai.understanding = 5;
+    updateUI(
+      "What is the core problem in the system?",
+      "Describe the problem area, not solutions",
+      [
+        "Link problem to student experience",
+        "Avoid activities or training"
+      ],
+      "⚠️ " + (text.length === 0 ? "I'm waiting..." : "Too short. Elaborate please.")
+    );
+    lockContinue();
+    updateProgress(5);
+    aiFace.innerText = "🤔"; // Thinking Face
+    return;
+  }
+
+  // Stage 2: Narrowing
+  if (text.length >= 20 && text.length < 80) {
+    ai.stage = 2;
+    // Calculate dynamic percentage between 20 chars (10%) and 80 chars (80%)
+    let dynamicScore = Math.min(80, Math.floor((text.length / 80) * 100));
+    ai.understanding = dynamicScore;
+    
+    updateUI(
+      "Which area is this problem most related to?",
+      "Teaching practices, classroom interaction, assessment?",
+      [
+        "Think about what is not working",
+        "Is this about engagement or learning?",
+        "Avoid solutions"
+      ],
+      "🟡 I'm starting to get it... Can you be more specific?"
+    );
+    lockContinue();
+    updateProgress(dynamicScore);
+    aiFace.innerText = "🧐"; // Monocle Face
+    return;
+  }
+
+  // Stage 3: Clear
+  if (text.length >= 80) {
+    ai.stage = 3;
+    ai.understanding = 100;
+    
+    // Stop thinking animation
+    aiPulse.classList.remove("ai-thinking");
+    aiPulse.classList.add("bg-green-100"); // Success ring
+    
+    updateUI(
+      "What is the core student learning issue here?",
+      "State the issue clearly in one or two sentences",
+      [
+        "Mention observable student difficulties",
+        "Be specific and concise",
+        "No activities or fixes"
+      ],
+      "✅ Perfect! I clearly understand the problem now."
+    );
+    unlockContinue();
+    updateProgress(100);
+    aiFace.innerText = "🤩"; // Star Eyes Face
+  }
+}
+
+/* ================= UI UPDATES ================= */
+
+function updateUI(title, sub, tips, feedback) {
+  // Smoothly update text
+  const qEl = document.getElementById("aiQuestion");
+  const sEl = document.getElementById("aiSubtext");
+  
+  if(qEl.innerText !== title) {
+      qEl.style.opacity = 0;
+      setTimeout(() => { qEl.innerText = title; qEl.style.opacity = 1; }, 200);
+  }
+  
+  sEl.innerText = sub;
+
+  // Update Tips
+  const list = document.getElementById("tipsList");
+  list.innerHTML = "";
+  tips.forEach(t => {
+    const li = document.createElement("li");
+    li.className = "flex items-center gap-2";
+    li.innerHTML = `<span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> ${t}`;
+    list.appendChild(li);
+  });
+
+  // Update Feedback
+  const fbEl = document.getElementById("aiFeedback");
+  fbEl.innerText = feedback;
+  if(feedback.includes("✅")) {
+      fbEl.classList.remove("text-slate-500", "italic");
+      fbEl.classList.add("text-green-600", "font-semibold");
+  } else {
+      fbEl.classList.add("text-slate-500", "italic");
+      fbEl.classList.remove("text-green-600", "font-semibold");
+  }
+}
+
+/* ================= PROGRESS VISUALS ================= */
+
+function updateProgress(score) {
+  // Update Right Panel Bar
+  const bar = document.getElementById("understandingBar");
+  const txt = document.getElementById("scoreText");
+  
+  bar.style.width = score + "%";
+  txt.innerText = score + "%";
+  
+  // Optional: Update Main Header Progress Bar (small steps)
+  // const pct = Math.round((score / 100) * 14);
+  // setProgress(pct);
+}
+
+/* ================= BUTTON STATES ================= */
+
+function unlockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = false;
+  b.classList.remove("bg-slate-200", "text-slate-400");
+  b.classList.add("bg-indigo-600", "hover:bg-indigo-700", "text-white", "hover:shadow-indigo-500/30", "transform", "hover:-translate-y-1");
+}
+
+function lockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = true;
+  b.classList.add("bg-slate-200", "text-slate-400");
+  b.classList.remove("bg-indigo-600", "hover:bg-indigo-700", "text-white", "hover:shadow-indigo-500/30", "transform", "hover:-translate-y-1");
+}
+
+/* ================= NAV ================= */
+
+function saveAndNext() {
+  if (ai.understanding < 100) {
+    alert("Please elaborate more so AI can understand.");
+    return;
+  }
+  saveData();
+  window.location.href = "level2.html";
+}
+
+function goBack() {
+  window.location.href = "setup.html";
+}
+</script>
+
+</body>
+</html>

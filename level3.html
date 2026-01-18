@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Level 3 – Success Definition | ShikshaManthan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/progress.js"></script>
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+
+    /* Background Pattern */
+    .bg-grid-pattern {
+        background-image: radial-gradient(#6366f1 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+        opacity: 0.1;
+    }
+
+    /* AI Animations */
+    @keyframes pulse-ring {
+        0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    .ai-thinking { animation: pulse-ring 2s infinite; }
+    
+    /* Progress Bar Override */
+    #progressBar, .progress-bar-fill { background-color: #4f46e5 !important; }
+  </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen relative text-slate-800">
+
+<div class="fixed inset-0 bg-grid-pattern pointer-events-none z-0"></div>
+
+<div id="header" class="relative z-20 sticky top-0 bg-white/90 backdrop-blur shadow-sm"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+  <section class="lg:col-span-2 bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8 relative overflow-hidden">
+    
+    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-indigo-500"></div>
+
+    <div class="mb-6">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wide">Level 3</span>
+        <span class="text-slate-400 text-sm font-medium">Vision of Success</span>
+      </div>
+      
+      <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 leading-tight">
+        What does success look like?
+      </h1>
+      <p class="text-slate-500 mt-2 text-sm sm:text-base">
+        Describe the final success state in observable, real-world language.
+      </p>
+    </div>
+
+    <div class="relative group">
+      <textarea
+        id="successInput"
+        rows="6"
+        placeholder="Example: Students regularly read grade-level text fluently and can answer comprehension questions independently."
+        class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-inner"
+        oninput="handleAIFlow(this.value)"
+      ></textarea>
+      <div id="statusBadge" class="absolute bottom-4 right-4 text-xs font-medium text-slate-400 transition-colors">
+        Waiting for input...
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">The Success Formula</p>
+      <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-5 flex flex-wrap md:flex-nowrap items-center gap-4 text-sm justify-center md:justify-start">
+        
+        <div class="flex flex-col items-center gap-1 text-center">
+          <div class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-xl">🙋</div>
+          <span class="font-semibold text-indigo-900">Behaviour</span>
+          <span class="text-xs text-indigo-600/70">What they do</span>
+        </div>
+
+        <span class="text-indigo-300 text-xl font-bold">+</span>
+
+        <div class="flex flex-col items-center gap-1 text-center">
+          <div class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-xl">💪</div>
+          <span class="font-semibold text-indigo-900">Ability</span>
+          <span class="text-xs text-indigo-600/70">What they can</span>
+        </div>
+
+        <span class="text-indigo-300 text-xl font-bold">+</span>
+
+        <div class="flex flex-col items-center gap-1 text-center">
+          <div class="w-10 h-10 bg-white rounded-full shadow-sm flex items-center justify-center text-xl">🔍</div>
+          <span class="font-semibold text-indigo-900">Evidence</span>
+          <span class="text-xs text-indigo-600/70">How we see it</span>
+        </div>
+
+        <span class="text-indigo-500 text-xl font-bold hidden md:block">=</span>
+
+        <div class="flex flex-col items-center gap-1 text-center ml-auto border-l-0 md:border-l-2 border-indigo-200 pl-0 md:pl-6">
+          <div class="px-4 py-1.5 bg-indigo-600 text-white rounded-full font-bold shadow-md text-xs uppercase tracking-wide">
+             Success
+          </div>
+          <span class="text-xs text-indigo-600/70 mt-1">Clear & Specific</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
+      <button onclick="goBack()"
+        class="flex items-center gap-2 px-5 py-2.5 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 font-medium transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back
+      </button>
+
+      <button id="continueBtn"
+        disabled
+        onclick="saveAndNext()"
+        class="px-8 py-3 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/30">
+        Continue
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+  </section>
+
+  <aside class="lg:col-span-1 space-y-6">
+    
+    <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 text-center relative overflow-hidden">
+        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-violet-100 rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+
+        <div id="aiAvatarContainer" class="relative mx-auto w-20 h-20 mb-4 flex items-center justify-center">
+            <div id="aiPulse" class="absolute inset-0 rounded-full border-2 border-indigo-100"></div>
+            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center text-2xl shadow-lg text-white z-10 transition-transform duration-300" id="aiFace">
+                🤖
+            </div>
+        </div>
+
+        <h2 class="text-lg font-bold text-slate-800">AI Feedback</h2>
+        <div class="h-1 w-10 bg-indigo-100 mx-auto rounded-full my-3"></div>
+        
+        <div id="aiFeedback" class="text-sm text-slate-500 italic min-h-[3rem] transition-colors duration-300">
+          "I'm checking if your definition includes behaviour, ability, and evidence..."
+        </div>
+    </div>
+
+    <div class="bg-slate-900 rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
+        <div class="flex justify-between items-end mb-2">
+            <span class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Success Clarity</span>
+            <span id="scoreText" class="text-2xl font-bold text-indigo-400">0%</span>
+        </div>
+        
+        <div class="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+            <div id="clarityBar" class="h-full bg-gradient-to-r from-indigo-400 to-violet-400 w-0 transition-all duration-500 ease-out"></div>
+        </div>
+        
+        <div class="mt-4 flex gap-2 text-xs text-slate-400">
+           <span>📏</span>
+           <span>Make it observable to reach 100%</span>
+        </div>
+    </div>
+
+  </aside>
+
+</main>
+
+<script>
+/* ================= INIT ================= */
+
+fetch("components/header.html")
+  .then(r => r.text())
+  .then(h => {
+    document.getElementById("header").innerHTML = h.replace(/teal/g, "indigo");
+    // Initial Progress for Level 3 (28%)
+    if(typeof setProgress === 'function') setProgress(28);
+  });
+
+window.onload = () => {
+  loadData();
+
+  // Guard Clause
+  if (!isLevel2Complete()) {
+    // Uncomment for production:
+    // window.location.href = "level2.html";
+    // return;
+  }
+};
+
+/* ================= GUARD ================= */
+
+function isLevel2Complete() {
+  if(typeof lfaData === 'undefined') return false;
+  return lfaData.studentOutcome && lfaData.studentOutcome.length > 20;
+}
+
+/* ================= AI STATE ================= */
+
+let ai = {
+  understanding: 0,   // 0–100
+  stage: 1            // 1=vague, 2=partial, 3=clear
+};
+
+/* ================= CORE AI FLOW ================= */
+
+function handleAIFlow(text) {
+  text = text.trim();
+  lfaData.successDefinition = text;
+
+  // UI References
+  const aiFace = document.getElementById("aiFace");
+  const aiPulse = document.getElementById("aiPulse");
+  const statusBadge = document.getElementById("statusBadge");
+
+  // Typing State
+  statusBadge.innerText = "Analyzing...";
+  statusBadge.className = "absolute bottom-4 right-4 text-xs font-medium text-indigo-500 transition-colors";
+  aiPulse.classList.add("ai-thinking");
+
+  // 1. Too Vague (<25)
+  if (text.length < 25) {
+    ai.stage = 1;
+    ai.understanding = 15;
+
+    updateFeedback("⚠️ Success statement is vague. Be more specific about what you see.");
+    lockContinue();
+    updateVisuals(15, "🤔", "text-slate-500");
+    return;
+  }
+
+  // 2. Partial Clarity (25 - 80)
+  if (text.length >= 25 && text.length < 80) {
+    ai.stage = 2;
+    // Dynamic score
+    let score = 25 + Math.floor(((text.length - 25) / 55) * 45); 
+    ai.understanding = score;
+
+    updateFeedback("🟡 Good start. Can you add how this success will be observed or verified?");
+    lockContinue();
+    updateVisuals(score, "📝", "text-yellow-600");
+    return;
+  }
+
+  // 3. Clear Success (>80)
+  if (text.length >= 80) {
+    ai.stage = 3;
+    ai.understanding = 100;
+
+    aiPulse.classList.remove("ai-thinking");
+    aiPulse.classList.add("bg-green-100");
+
+    updateFeedback("✅ Success definition is clear, specific, and observable.");
+    unlockContinue();
+    updateVisuals(100, "🏆", "text-green-600");
+  }
+}
+
+/* ================= VISUAL HELPERS ================= */
+
+function updateVisuals(score, emoji, textColorClass) {
+    // Meter
+    document.getElementById("clarityBar").style.width = score + "%";
+    document.getElementById("scoreText").innerText = score + "%";
+    
+    // Avatar
+    document.getElementById("aiFace").innerText = emoji;
+
+    // Feedback Text Style
+    const fb = document.getElementById("aiFeedback");
+    fb.className = `text-sm font-medium min-h-[3rem] transition-colors duration-300 ${textColorClass}`;
+    
+    // Global Progress
+    updateProgress();
+}
+
+function updateFeedback(msg) {
+  document.getElementById("aiFeedback").innerText = msg;
+}
+
+/* ================= PROGRESS ================= */
+
+function updateProgress() {
+  const base = 28;        // progress before Level 3
+  const range = 14;       // progress contribution of Level 3
+  const pct = base + Math.round((ai.understanding / 100) * range);
+  if(typeof setProgress === 'function') setProgress(pct);
+}
+
+/* ================= BUTTON STATES ================= */
+
+function unlockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = false;
+  b.classList.remove("bg-slate-200", "text-slate-400");
+  b.classList.add("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
+}
+
+function lockContinue() {
+  const b = document.getElementById("continueBtn");
+  b.disabled = true;
+  b.classList.add("bg-slate-200", "text-slate-400");
+  b.classList.remove("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
+}
+
+/* ================= NAV ================= */
+
+function saveAndNext() {
+  if (ai.understanding < 100) {
+    alert("Please refine the success definition further.");
+    return;
+  }
+  saveData();
+  window.location.href = "level4.html";
+}
+
+function goBack() {
+  window.location.href = "level2.html";
+}
+</script>
+
+</body>
+</html>
