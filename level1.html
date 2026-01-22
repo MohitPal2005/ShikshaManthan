@@ -368,37 +368,65 @@ function saveAndNext() {
   // Redirect ONLY
   window.location.href = "level2.html";
 }
+
+// REPLACE YOUR EXISTING submitProblem FUNCTION WITH THIS:
+
 async function submitProblem() {
   const problemText = document.getElementById("problemInput").value.trim();
+  const feedbackEl = document.getElementById("aiFeedback");
 
+  // 1. Validation
   if (problemText.length < 10) {
     alert("Please enter a clear problem before submitting.");
     return;
   }
 
-  // Show backend activity (overwrite frontend-only message)
-  document.getElementById("aiFeedback").innerText =
-    "Submitting problem to AI for follow-up questions…";
+  // 2. Show Loading State (Better UX)
+  feedbackEl.innerText = "🤖 Analyzing your problem and generating questions...";
+  feedbackEl.classList.add("animate-pulse", "text-indigo-600");
+  feedbackEl.classList.remove("text-red-500", "italic");
 
   try {
-    const res = await fetch("http://127.0.0.1:8000/generate-followup", {
+    // -----------------------------------------------------------
+    // PASTE YOUR HUGGING FACE DIRECT URL BELOW
+    // Example: "https://yourname-project.hf.space/generate-followup"
+    // -----------------------------------------------------------
+    const API_URL = "https://shivam-99x-teacher-rag-backend.hf.space/generate-followup";
+    
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: problemText })
     });
 
+    if (!res.ok) throw new Error("Server error");
+
     const data = await res.json();
 
-    document.getElementById("aiFeedback").innerText =
-      data.follow_up_questions;
+    // 3. Render Success
+    feedbackEl.classList.remove("animate-pulse", "text-indigo-600");
+    feedbackEl.classList.add("text-slate-800", "font-medium");
+    
+    // CRITICAL: This ensures the AI's numbered list is displayed correctly
+    feedbackEl.style.whiteSpace = "pre-line"; 
+    feedbackEl.style.textAlign = "left";
+    
+    feedbackEl.innerText = data.follow_up_questions;
 
-    // Store response if needed later
-    lfaData.followUpQuestions = data.follow_up_questions;
-    saveData();
+    // 4. Save Data
+    if (typeof lfaData !== 'undefined') {
+        lfaData.followUpQuestions = data.follow_up_questions;
+        if (typeof saveData === 'function') saveData();
+    }
+    
+    // 5. Unlock Continue Button
+    unlockContinue(); 
 
   } catch (err) {
-    document.getElementById("aiFeedback").innerText =
-      "❌ Backend error. Please try again.";
+    // 6. Error Handling
+    feedbackEl.classList.remove("animate-pulse");
+    feedbackEl.classList.add("text-red-500");
+    feedbackEl.innerText = "❌ Error: Could not reach the AI server. Check your internet or URL.";
     console.error(err);
   }
 }
