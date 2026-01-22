@@ -144,6 +144,9 @@
 
 <script>
 /* ================= INIT ================= */
+const MEASUREMENT_BACKEND_URL =
+  "https://shivam-99x-shikshamanthan-stakeholder-backend.hf.space/evaluate-measurement";
+
 
 fetch("components/header.html")
   .then(r => r.text())
@@ -302,6 +305,7 @@ function evaluateState() {
 
   updateFeedback("✅ Indicators are outcome-linked and measure real change. Ready to review!", "text-green-600", "🎉");
   unlockContinue();
+  evaluateMeasurementWithLLM();
 }
 
 function updateFeedback(msg, colorClass, emoji) {
@@ -338,6 +342,42 @@ function lockContinue() {
   b.classList.add("bg-slate-200", "text-slate-400");
   b.classList.remove("bg-indigo-600", "hover:bg-indigo-700", "text-white", "shadow-lg", "hover:-translate-y-1");
 }
+
+async function evaluateMeasurementWithLLM() {
+  const indicators = lfaData.indicators
+    .map(i => i.text)
+    .filter(t => t && t.length > 0);
+
+  if (!lfaData.studentOutcome || indicators.length === 0) return;
+
+  document.getElementById("aiFeedback").innerText =
+    "🤖 Checking if indicators truly measure the outcome...";
+
+  try {
+    const res = await fetch(MEASUREMENT_BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        student_outcome: lfaData.studentOutcome,
+        indicators: indicators
+      })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("aiFeedback").innerText = data.response;
+
+    // Store for review page
+    lfaData.measurementCheck = data.response;
+    saveData();
+
+  } catch (err) {
+    document.getElementById("aiFeedback").innerText =
+      "❌ Could not evaluate measurement indicators.";
+    console.error(err);
+  }
+}
+
 
 /* ================= NAV ================= */
 
