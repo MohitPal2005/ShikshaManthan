@@ -228,6 +228,8 @@
 
 <script>
 /* ================= INIT ================= */
+const STAKEHOLDER_BACKEND_URL =
+  "https://shivam-99x-shikshamanthan-stakeholder-backend.hf.space/analyze-stakeholders";
 
 fetch("components/header.html")
   .then(r => r.text())
@@ -358,9 +360,11 @@ function updateState() {
   }
 
   // Success
-  updateFeedback("✅ Strong system map! Multiple actors identified.", "text-green-600");
-  unlockContinue();
-  updateVisuals("🤝", false, true); // Success
+  // Success
+updateVisuals("🤝", false, true);
+unlockContinue();
+analyzeStakeholdersWithLLM();
+
 }
 
 function updateVisuals(emoji, isThinking, isSuccess = false) {
@@ -427,6 +431,42 @@ function saveAndNext() {
 function goBack() {
   window.location.href = "level3.html";
 }
+
+async function analyzeStakeholdersWithLLM() {
+  if (!lfaData.stakeholders || lfaData.stakeholders.length < 2) return;
+
+  document.getElementById("aiFeedback").innerText =
+    "🤖 Analyzing stakeholder roles and system capability...";
+
+  try {
+    const res = await fetch(STAKEHOLDER_BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        stakeholders: lfaData.stakeholders,
+        category: lfaData.program?.category || "Not specified",
+        subject: lfaData.program?.subject || "Not specified",
+        topic: lfaData.program?.topic || "Not specified",
+        description: lfaData.problem || "No description provided"
+      })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("aiFeedback").innerText = data.response;
+
+    // Save for next levels
+    lfaData.stakeholderAnalysis = data.response;
+    saveData();
+
+  } catch (err) {
+    document.getElementById("aiFeedback").innerText =
+      "❌ Could not analyze stakeholders.";
+    console.error(err);
+  }
+}
+
+
 </script>
 
 </body>
