@@ -444,9 +444,9 @@ async function analyzeStakeholdersWithLLM() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         stakeholders: lfaData.stakeholders,
-        category: lfaData.program?.category || "Not specified",
-        subject: lfaData.program?.subject || "Not specified",
-        topic: lfaData.program?.topic || "Not specified",
+        category: lfaData.program?.theme || "General Education",
+        subject: lfaData.program?.name || "Education Initiative",
+        topic: lfaData.program?.level || "System Level",
         description: lfaData.problem || "No description provided"
       })
     });
