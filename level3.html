@@ -93,79 +93,103 @@
 </aside>
 
 </main>
-
 <script>
-const BACKEND_URL =
+  // 1. FIX: Call loadData separately
   loadData();
-  "https://shivam-99x-shikshamanthan-backend.hf.space/evaluate-success";
 
-let aiScore = 0;
+  // 2. FIX: Define the URL correctly
+  const BACKEND_URL = "https://shivam-99x-shikshamanthan-backend.hf.space/evaluate-success";
 
-function handleAIFlow(text) {
-  lfaData.successDefinition = text.trim();
-  document.getElementById("statusBadge").innerText = "Analyzing…";
+  let aiScore = 0;
+  let debounceTimer; // Variable to hold the timer
 
-  if (text.length < 30) {
-    updateUI(15, "🤔", "Too vague. Describe observable success.");
-    lockContinue();
-    return;
+  function handleAIFlow(text) {
+    lfaData.successDefinition = text.trim();
+    document.getElementById("statusBadge").innerText = "Analyzing…";
+
+    // Clear the previous timer so we don't spam the API
+    clearTimeout(debounceTimer);
+
+    if (text.length < 30) {
+      updateUI(15, "🤔", "Too vague. Describe observable success.");
+      lockContinue();
+      return;
+    }
+
+    if (text.length >= 30 && text.length < 80) {
+      updateUI(45, "📝", "Good start. Add behaviour, ability, and evidence.");
+      lockContinue();
+      return;
+    }
+
+    // 3. FIX: Add a delay (Debounce). Only call API if user stops typing for 1 second
+    document.getElementById("aiFeedback").innerText = "Waiting for you to finish typing...";
+    
+    debounceTimer = setTimeout(() => {
+        evaluateSuccess(text);
+    }, 1000); // Wait 1000ms (1 second)
   }
 
-  if (text.length >= 30 && text.length < 80) {
-    updateUI(45, "📝", "Good start. Add behaviour, ability, and evidence.");
-    lockContinue();
-    return;
+  async function evaluateSuccess(text) {
+    document.getElementById("aiFeedback").innerText = "🤖 Evaluating success clarity…";
+
+    try {
+        // 4. FIX: Added try/catch to handle errors gracefully
+        const res = await fetch(BACKEND_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ success_description: text })
+        });
+
+        if (!res.ok) {
+            throw new Error(`Server error: ${res.status}`);
+        }
+
+        const data = await res.json();
+        document.getElementById("aiFeedback").innerText = data.evaluation;
+
+        const match = data.evaluation.match(/(\d+)%/);
+        aiScore = match ? parseInt(match[1]) : 0;
+
+        updateUI(aiScore, "🏆", null);
+
+        if (aiScore >= 70) unlockContinue();
+        else lockContinue();
+
+    } catch (error) {
+        console.error("API Error:", error);
+        document.getElementById("aiFeedback").innerText = "⚠️ Error connecting to AI. Please try again.";
+    }
   }
 
-  // Call backend when sufficiently detailed
-  evaluateSuccess(text);
-}
+  function updateUI(score, emoji, fallbackText) {
+    document.getElementById("clarityBar").style.width = score + "%";
+    document.getElementById("scoreText").innerText = score + "%";
+    document.getElementById("aiFace").innerText = emoji;
+    if (fallbackText) document.getElementById("aiFeedback").innerText = fallbackText;
+  }
 
-async function evaluateSuccess(text) {
-  document.getElementById("aiFeedback").innerText = "🤖 Evaluating success clarity…";
+  function unlockContinue() {
+    document.getElementById("continueBtn").disabled = false;
+    // Remove the disabled styling class if needed, or rely on Tailwind's disabled: modifier
+    document.getElementById("continueBtn").classList.remove("bg-slate-200");
+    document.getElementById("continueBtn").classList.add("bg-indigo-600");
+  }
 
-  const res = await fetch(BACKEND_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ success_description: text })
-  });
+  function lockContinue() {
+    document.getElementById("continueBtn").disabled = true;
+    document.getElementById("continueBtn").classList.add("bg-slate-200");
+    document.getElementById("continueBtn").classList.remove("bg-indigo-600");
+  }
 
-  const data = await res.json();
-  document.getElementById("aiFeedback").innerText = data.evaluation;
+  function saveAndNext() {
+    saveData();
+    window.location.href = "level4.html";
+  }
 
-  const match = data.evaluation.match(/(\d+)%/);
-  aiScore = match ? parseInt(match[1]) : 0;
-
-  updateUI(aiScore, "🏆", null);
-
-  if (aiScore >= 70) unlockContinue();
-  else lockContinue();
-}
-
-function updateUI(score, emoji, fallbackText) {
-  document.getElementById("clarityBar").style.width = score + "%";
-  document.getElementById("scoreText").innerText = score + "%";
-  document.getElementById("aiFace").innerText = emoji;
-  if (fallbackText) document.getElementById("aiFeedback").innerText = fallbackText;
-}
-
-function unlockContinue() {
-  document.getElementById("continueBtn").disabled = false;
-}
-
-function lockContinue() {
-  document.getElementById("continueBtn").disabled = false;
-}
-
-function saveAndNext() {
-
-  saveData();
-  window.location.href = "level4.html";
-}
-
-function goBack() {
-  window.location.href = "level2.html";
-}
+  function goBack() {
+    window.location.href = "level2.html";
+  }
 </script>
 
 </body>
