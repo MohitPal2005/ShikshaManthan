@@ -242,8 +242,6 @@
               <p class="text-sm leading-relaxed opacity-80">
                 Complete the context on the left to unlock the LFA generator.
                 <br><br>
-                <span class="text-xs uppercase tracking-wide font-semibold opacity-60">Structure Preview:</span><br>
-                Problem → Root Causes → Solutions → Outcomes
               </p>
             </div>
           </div>
@@ -286,16 +284,14 @@
   <script>
     // 1. Dynamic Header Loading & Theme Correction
     fetch("components/header.html")
-      .then(res => res.text())
-      .then(data => {
-        const headerEl = document.getElementById("header");
-        // Hacky Fix: Replace any 'teal' classes with 'indigo' in the fetched HTML string
-        // This ensures the header matches even if the original file isn't updated
-        const indigoData = data.replaceAll("teal-600", "indigo-600")
-          .replaceAll("teal-50", "indigo-50")
-          .replaceAll("bg-teal", "bg-indigo");
-        headerEl.innerHTML = indigoData;
-      });
+    .then(res => res.text())
+    .then(data => {
+      const headerEl = document.getElementById("header");
+      const indigoData = data.replaceAll("teal-600", "indigo-600")
+        .replaceAll("teal-50", "indigo-50")
+        .replaceAll("bg-teal", "bg-indigo");
+      headerEl.innerHTML = indigoData;
+    });
 
     // 2. Geography Data & Logic
     const districtData = {
@@ -612,30 +608,26 @@
 
 
     function handleStateChange(state) {
-      lfaData.program.geography.state = state;
+  lfaData.program.geography.state = state;
+  lfaData.program.geography.district = ""; // 🔥 RESET DISTRICT
 
-      // Get District Select Element
-      const districtSelect = document.getElementById("districtSelect");
+  const districtSelect = document.getElementById("districtSelect");
+  districtSelect.innerHTML = '<option value="">Select District</option>';
 
-      // Clear existing options
-      districtSelect.innerHTML = '<option value="">Select District</option>';
+  if (state && districtData[state]) {
+    districtSelect.disabled = false;
+    districtData[state].forEach(district => {
+      const option = document.createElement("option");
+      option.value = district;
+      option.textContent = district;
+      districtSelect.appendChild(option);
+    });
+  } else {
+    districtSelect.disabled = true;
+  }
 
-      if (state && districtData[state]) {
-        // Enable and Populate
-        districtSelect.disabled = false;
-        districtData[state].forEach(district => {
-          const option = document.createElement("option");
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-      } else {
-        // Disable if no state
-        districtSelect.disabled = true;
-      }
-
-      updateFrameworkStatus();
-    }
+  updateFrameworkStatus();
+}
 
     // 3. Theme & Level Selection (Visual Fix)
     function selectTheme(btn, theme) {
@@ -673,14 +665,18 @@
 
     // 4. Form Validation Logic
     function isContextComplete() {
-      const p = lfaData.program;
-      return (
-        p.name.trim() !== "" &&
-        p.theme.trim() !== "" &&
-        p.level.trim() !== "" &&
-        p.geography.state.trim() !== ""
-      );
-    }
+  const p = lfaData.program;
+
+  if (!p) return false;
+
+  return (
+    typeof p.name === "string" && p.name.trim() !== "" &&
+    typeof p.theme === "string" && p.theme.trim() !== "" &&
+    typeof p.level === "string" && p.level.trim() !== "" &&
+    typeof p.geography?.state === "string" && p.geography.state.trim() !== "" &&
+    typeof p.geography?.district === "string" && p.geography.district.trim() !== ""
+  );
+}
 
     function updateFrameworkStatus() {
       const box = document.getElementById("frameworkBox");
@@ -725,28 +721,46 @@
 
 
     function saveAndNext() {
-      if (!isContextComplete()) {
-        // Shake effect on error
-        const btn = document.getElementById("continueBtn");
-        btn.classList.add("animate-ping");
-        setTimeout(() => btn.classList.remove("animate-ping"), 300);
-        return false;
-      }
+  if (!isContextComplete()) {
+    document.getElementById("formError").classList.remove("hidden");
+    return;
+  }
 
-      applyContextLogic();
-      saveData();
-      window.location.href = "level1.html";
-    }
+  const user = localStorage.getItem("currentUser");
+  if (!user) {
+    alert("Please log in to continue.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  applyContextLogic();
+  saveData();
+  window.location.href = "level1.html";
+}
+
+
 
     window.onload = () => {
-      // Attempt to set progress bar color if progress.js exposes an element
-      // The CSS style block in <head> handles the main override, but we call setProgress here.
-      if (typeof setProgress === "function") setProgress(1);
+    if (typeof setProgress === "function") setProgress(1);
 
-      loadData();
-      updateFrameworkStatus();
+    loadData();
+
+    /* 🔴 🔴 🔴 FINAL & REQUIRED FIX 🔴 🔴 🔴 */
+    /* RESET PROGRAM DATA TO PREVENT AUTO-ENABLE */
+    lfaData.program = {
+      name: "",
+      theme: "",
+      level: "",
+      geography: {
+        state: "",
+        district: ""
+      }
     };
-  </script>
+    /* 🔴 🔴 🔴 END FIX 🔴 🔴 🔴 */
+
+    updateFrameworkStatus();
+  };
+</script>
 
 </body>
 
