@@ -25,6 +25,30 @@
         cursor: not-allowed;
         opacity: 0.6;
     }
+
+    /* AI Markdown Styles */
+    .ai-markdown strong { 
+        color: #4338ca; /* Indigo-800 */
+        font-weight: 800; /* Extra bold for emphasis */
+    }
+    .ai-markdown ul { 
+        list-style-type: disc; 
+        padding-left: 1.5rem; 
+        margin-top: 8px;
+        margin-bottom: 12px;
+    }
+    .ai-markdown li {
+        margin-bottom: 6px;
+    }
+    .ai-markdown h3 {
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 16px;
+        margin-bottom: 8px;
+        font-size: 1rem;
+        border-bottom: 1px solid #e0e7ff;
+        padding-bottom: 4px;
+    }
   </style>
 </head>
 
@@ -103,7 +127,7 @@
   <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
     <div id="aiFace" class="text-3xl mb-2">🤖</div>
     <h2 class="font-bold">AI Feedback</h2>
-    <div id="aiFeedback" class="text-sm italic text-slate-500 mt-2">
+    <div id="aiFeedback" class="text-sm font-bold text-slate-500 mt-2 ai-markdown">
       "Write at least 70 characters and click Submit to get my feedback!"
     </div>
   </div>
@@ -127,7 +151,23 @@
 
   const BACKEND_URL = "https://shivam-99x-shikshamanthan-backend.hf.space/evaluate-success";
   
-  // 1. Handle User Input - Controls "Submit" Button only
+  // 1. Markdown Parser
+  function parseMarkdown(text) {
+    if(!text) return "";
+    let html = text;
+    // Headers
+    html = html.replace(/^### (.*?)(\n|$)/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.*?)(\n|$)/gm, '<h3>$1</h3>');
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Lists
+    html = html.replace(/^\- (.*?)(\n|$)/gm, '<li>$1</li>');
+    // Line breaks
+    html = html.replace(/\n/g, '<br>');
+    return html;
+  }
+
+  // 2. Handle User Input - Controls "Submit" Button only
   function handleInput(text) {
     const currentLength = text.length;
     
@@ -146,17 +186,12 @@
     } else {
         submitBtn.disabled = true;
         document.getElementById("statusBadge").innerText = "Keep typing...";
-        
-        // Reset "Continue" button if user deletes text below threshold?
-        // (Optional safety: keeps UI clean)
         lockContinue(); 
     }
   }
 
   // 3. API Call - Triggered ONLY by Submit Button
-
-
-async function evaluateSuccess() {
+  async function evaluateSuccess() {
     const text = document.getElementById("successInput").value;
     const submitBtn = document.getElementById("submitBtn");
     const aiFeedbackBox = document.getElementById("aiFeedback");
@@ -164,7 +199,11 @@ async function evaluateSuccess() {
     // UI Loading State
     submitBtn.innerText = "Analyzing...";
     submitBtn.disabled = true;
-    aiFeedbackBox.innerText = "🤖 Analyzing your definition...";
+    
+    // Reset classes for loading
+    aiFeedbackBox.className = "text-sm font-bold text-slate-500 mt-2 ai-markdown";
+    aiFeedbackBox.innerHTML = "🤖 Analyzing your definition...";
+    
     document.getElementById("aiFace").innerText = "⏳";
 
     try {
@@ -178,19 +217,13 @@ async function evaluateSuccess() {
 
         const data = await res.json();
         
-        // Show Response
-        aiFeedbackBox.innerText = data.evaluation;
+        // --- UPDATED: Use Markdown parser & Add Bold Styling ---
+        // Added 'font-bold' and changed text color to darker slate (slate-800)
+        aiFeedbackBox.className = "text-sm font-bold text-slate-800 mt-2 text-left ai-markdown";
+        aiFeedbackBox.innerHTML = parseMarkdown(data.evaluation);
 
-        // --- FIX START ---
-        // Old Regex: /(\d+)%/  <-- This was grabbing the first % it saw (the 80%)
-        
-        // New Regex: Look specifically for "Success Clarity Score:" followed by a number
         const match = data.evaluation.match(/Success Clarity Score:\s*(\d+)%/i);
-        
-        // Logic: If specific tag found, use it. If not, fallback to searching for just the last % number? 
-        // Safer to default to 0 if the specific tag isn't found to avoid errors.
         const aiScore = match ? parseInt(match[1]) : 0;
-        // --- FIX END ---
 
         updateScoreUI(aiScore);
 
