@@ -282,6 +282,15 @@
   </main>
 
   <script>
+
+    // 🔐 AUTH GUARD — BLOCK NON-LOGGED USERS
+const currentUser = localStorage.getItem("currentUser");
+
+if (!currentUser) {
+  alert("Please log in to start creating a program.");
+  window.location.replace("index.html");
+}
+
     // 1. Dynamic Header Loading & Theme Correction
     fetch("components/header.html")
     .then(res => res.text())
