@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ShikshaManthan</title>
+  <title>ShikshaManthan - Build Your Program Logic</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+  
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/css/styles.css">
-
   <style>
-    body { font-family: 'Poppins', sans-serif; }
+    body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
     
-    /* Subtle Grid Background Pattern */
     .bg-grid-pattern {
         background-size: 40px 40px;
         background-image: linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
@@ -25,66 +22,178 @@
         -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
     }
 
-    /* Floating Animation */
+    /* Floating Animation (Background Only) */
     @keyframes float {
         0% { transform: translate(0px, 0px) scale(1); }
         33% { transform: translate(30px, -50px) scale(1.1); }
         66% { transform: translate(-20px, 20px) scale(0.9); }
         100% { transform: translate(0px, 0px) scale(1); }
     }
-    .animate-float { animation: float 7s infinite ease-in-out; }
-    .animate-float-delayed { animation: float 7s infinite ease-in-out; animation-delay: 3s; }
+    .animate-float { animation: float 10s infinite ease-in-out; }
+    .animate-float-delayed { animation: float 10s infinite ease-in-out; animation-delay: 5s; }
 
-    /* Glassmorphism */
-    .glass-card-enhanced {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    }
+    /* --- 3D PHONE MOCKUP STYLES --- */
     
-    /* Feature Box */
-    .feature-box {
+    .phone-perspective-wrapper {
+        perspective: 1500px; /* Creates the 3D depth */
+        width: 320px;
+        height: 640px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .phone-3d {
+        width: 300px;
+        height: 600px;
+        background: #1e293b; /* Dark Frame */
+        border-radius: 45px;
+        position: relative;
+        /* The 3D Rotation */
+        transform: rotateY(-15deg) rotateX(5deg); 
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+        /* Complex Shadows for Depth */
+        box-shadow: 
+            25px 25px 50px rgba(0,0,0,0.3), /* Drop Shadow */
+            -2px -2px 0px rgba(255,255,255,0.1) inset, /* Top-Left Highlight */
+            2px 2px 0px rgba(0,0,0,0.5) inset; /* Bottom-Right Shadow */
+    }
+
+    /* Interactive: Flatten on hover to read easily */
+    .phone-perspective-wrapper:hover .phone-3d {
+        transform: rotateY(0deg) rotateX(0deg);
+        box-shadow: 0px 20px 40px rgba(0,0,0,0.2);
+    }
+
+    /* Side Buttons (Volume/Power) for realism */
+    .phone-3d::before {
+        content: '';
+        position: absolute;
+        top: 100px;
+        left: -3px;
+        width: 3px;
+        height: 30px;
+        background: #334155;
+        border-radius: 2px 0 0 2px;
+    }
+    .phone-3d::after {
+        content: '';
+        position: absolute;
+        top: 140px;
+        left: -3px;
+        width: 3px;
+        height: 50px;
+        background: #334155;
+        border-radius: 2px 0 0 2px;
+    }
+
+    .phone-screen-container {
+        position: absolute;
+        inset: 12px; /* Bezel Thickness */
+        background: #fff;
+        border-radius: 35px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    /* The Notch */
+    .phone-notch {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 140px;
+        height: 28px;
+        background: #1e293b;
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+        z-index: 30;
+    }
+
+    /* Glass Reflection Overlay */
+    .screen-reflection {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0) 60%);
+        pointer-events: none;
+        z-index: 40;
+    }
+
+    /* --- VERTICAL SCROLL CONTENT --- */
+    .marquee-wrapper {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        padding-top: 10px;
+        /* Fading mask */
+        mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    }
+
+    .marquee-content {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 16px;
+        animation: scroll-vertical 15s linear infinite; 
+    }
+
+    .marquee-content:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes scroll-vertical {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); }
+    }
+
+    /* App Card Style */
+    .app-card {
         background: white;
-        padding: 1rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        font-size: 0.9rem;
-        color: #4b5563;
+        padding: 14px;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
+        transition: all 0.2s;
     }
-    .feature-box::before {
-        content: "✓";
-        color: #4f46e5;
-        font-weight: bold;
-        background: #e0e7ff;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
+    
+    .app-card:hover {
+        border-color: #818cf8;
+        transform: scale(1.03);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.1);
+    }
+
+    .app-icon-box {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
+        font-size: 18px;
+        flex-shrink: 0;
+        color: #4f46e5;
+    }
+
+    /* Nodes Journey Map */
+    .level-node { transition: transform 0.3s ease; }
+    .level-node:hover { transform: translateY(-5px); }
+    .level-node:hover .level-circle {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.15);
+        border-color: #6366f1;
     }
   </style>
-
-  <script>
-    // Standard UI functions that don't need Modules
-    function closeAuthModal() {
-      const modal = document.getElementById("authOverlay");
-      if(modal) modal.classList.add("hidden");
-      window.isSignup = false;
-    }
-
-    function toggleProfileMenu() {
-        // Optional: If you wanted a dropdown later
-        window.location.href = "dashboard.html"; 
-    }
-  </script>
 
   <script type="module">
     import {
@@ -98,10 +207,57 @@
 
     import { auth } from "./assets/js/firebase.js";
 
+    // --- GLOBAL VARIABLES ---
+    window.currentUser = null;
+    window.authResolved = false; // ✅ ADD THIS
+    window.isSignup = false;
+
+    // --- HELPER FUNCTIONS ---
+
+    // 1. Close Modal
+    window.closeAuthModal = function() {
+      const modal = document.getElementById("authOverlay");
+      if(modal) modal.classList.add("hidden");
+      window.isSignup = false;
+    }
+
+    // 2. Open Login Modal
+    window.openLogin = function() {
+        window.isSignup = false; 
+        document.getElementById("authOverlay").classList.remove("hidden"); 
+        updateAuthUI(); 
+    };
+
+    // 3. Open Signup Modal
+    window.openSignup = function() { 
+        window.isSignup = true; 
+        document.getElementById("authOverlay").classList.remove("hidden"); 
+        updateAuthUI(); 
+    };
+
+    // 4. Update Modal Text
+    function updateAuthUI() {
+      const title = document.getElementById("authTitle");
+      const btn = document.getElementById("authBtnText"); 
+      const switchText = document.getElementById("authSwitchText");
+
+      if (window.isSignup) {
+        title.innerText = "Create your account";
+        btn.innerText = "Create account";
+        switchText.innerHTML = `Already have an account? <button onclick="openLogin()" class="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline">Log in</button>`;
+      } else {
+        title.innerText = "Welcome back";
+        btn.innerText = "Log in";
+        switchText.innerHTML = `Don’t have an account? <button onclick="openSignup()" class="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline">Sign up</button>`;
+      }
+    }
+
+    // --- NAVIGATION ACTIONS ---
+
+    // Update buttons based on auth state
     window.updateLandingActions = (isLoggedInUser) => {
       const primaryBtn = document.getElementById("primaryActionBtn");
       if (!primaryBtn) return;
-
       if (isLoggedInUser) {
         primaryBtn.innerText = "Start New LFA";
       } else {
@@ -109,227 +265,124 @@
       }
     };
 
-    window.isLoggedIn = () => {
-      return !!auth.currentUser;
+    window.startPrimaryAction = () => { 
+        window.location.href = "setup.html"; 
     };
+    
+    // SAFE CONTINUE DRAFT
+window.continueDraft = () => {
+  // If user already logged in → go dashboard
+  if (window.currentUser) {
+    window.location.href = "dashboard.html";
+    return;
+  }
 
+  // If auth resolved & no user → login
+  if (window.authResolved && !window.currentUser) {
+    openLogin();
+    return;
+  }
 
-    window.isSignup = false;
-
-    // Attach to window so HTML onclick works
-    window.closeAuthModal = closeAuthModal; 
-
-    function updateAuthUI() {
-      const title = document.getElementById("authTitle");
-      const btn = document.getElementById("authBtnText");
-      const switchText = document.getElementById("authSwitchText");
-
-      if (window.isSignup) {
-        title.innerText = "Create your account";
-        btn.innerText = "Create account";
-        switchText.innerHTML = `
-          Already have an account?
-          <button onclick="openLogin()" class="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline">
-            Log in
-          </button>
-        `;
-      } else {
-        title.innerText = "Welcome back";
-        btn.innerText = "Log in";
-        switchText.innerHTML = `
-          Don’t have an account?
-          <button onclick="openSignup()" class="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline">
-            Sign up
-          </button>
-        `;
-      }
+  // If auth not yet resolved → wait once, then retry
+  setTimeout(() => {
+    if (window.currentUser) {
+      window.location.href = "dashboard.html";
+    } else {
+      openLogin();
     }
+  }, 300);
+};
 
-    window.startPrimaryAction = () => {
-      if (!isLoggedIn()) {
-        // defined in mode.js usually, or handled here
-        window.location.href = "setup.html"; // Fallback
-      } else {
-        window.location.href = "setup.html";
-      }
-    };
 
-    window.continueDraft = () => {
-      if (isLoggedIn()) {
+
+
+    // SAFE PROFILE CLICK
+    window.openDashboard = () => {
+    if (window.currentUser) {
         window.location.href = "dashboard.html";
-      } else {
+    } else {
         openLogin();
-      }
+    }
     };
 
-    window.openLogin = () => {
-      window.isSignup = false;
-      document.getElementById("authOverlay").classList.remove("hidden");
-      updateAuthUI();
-    };
+    // --- AUTH ACTIONS ---
 
-    window.openSignup = () => {
-      window.isSignup = true;
-      document.getElementById("authOverlay").classList.remove("hidden");
-      updateAuthUI();
-    };
-
-    window.loginWithGoogle = async () => {
-      try {
-        await firebaseGoogleLogin();
-        window.location.reload(); 
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    window.loginWithApple = async () => {
-      try {
-        await firebaseAppleLogin();
-        window.location.reload(); 
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    window.logoutUser = async () => {
-      try {
-        await logout();
-        localStorage.removeItem("currentUser");
-        localStorage.removeItem("userLFAs");
-        window.location.reload();
-      } catch (err) {
-        alert(err.message);
-      }
-    };
+    window.loginWithGoogle = async () => { try { await firebaseGoogleLogin(); /* Listener handles reload/ui */ } catch (err) { alert(err.message); } };
+    window.loginWithApple = async () => { try { await firebaseAppleLogin(); /* Listener handles reload/ui */ } catch (err) { alert(err.message); } };
+    window.logoutUser = async () => { try { await logout(); localStorage.removeItem("currentUser"); window.location.reload(); } catch (err) { alert(err.message); } };
 
     window.handleLogin = async () => {
       const emailVal = document.getElementById("email").value;
       const passwordVal = document.getElementById("password").value;
-
       try {
-        if (window.isSignup) {
-          await signup(emailVal, passwordVal);
-        } else {
-          await login(emailVal, passwordVal);
-        }
+        window.isSignup ? await signup(emailVal, passwordVal) : await login(emailVal, passwordVal);
+        // The listener will catch the state change, but a reload ensures fresh state for dashboard
         window.location.reload();
-      } catch (err) {
-        alert(err.message);
-      }
+      } catch (err) { alert(err.message); }
     };
 
-    function saveUserToLocalStorage(user) {
-      const userData = {
-        uid: user.uid,
-        name: user.displayName || "ShikshaManthan User",
-        email: user.email,
-        avatar: user.photoURL ||
-          "https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff",
-        role: "Program Designer"
-      };
-      localStorage.setItem("currentUser", JSON.stringify(userData));
-    }
+    // --- AUTH LISTENER ---
+listenAuth(user => {
+  console.log("Auth State Changed:", user);
 
-    listenAuth(user => {
-      if (user) {
-        saveUserToLocalStorage(user);
-        closeAuthModal();
-        document.getElementById("auth-area").classList.add("hidden");
-        document.getElementById("profile-area").classList.remove("hidden");
-        window.updateLandingActions(true);
-      } else {
-        closeAuthModal();
-        window.updateLandingActions(false);
-      }
-    });
+  window.currentUser = user;
+  window.authResolved = true; // ✅ auth is now ready
+
+  if (user) {
+    window.closeAuthModal();
+    document.getElementById("auth-area").classList.add("hidden");
+    document.getElementById("profile-area").classList.remove("hidden");
+    window.updateLandingActions(true);
+  } else {
+    document.getElementById("auth-area").classList.remove("hidden");
+    document.getElementById("profile-area").classList.add("hidden");
+    window.updateLandingActions(false);
+  }
+});
+
   </script>
 </head>
 
 <body class="bg-slate-50 relative font-[Poppins] overflow-x-hidden min-h-screen flex flex-col">
 
-<div class="absolute inset-0 bg-grid-pattern z-0 pointer-events-none fixed"></div>
+<div class="fixed inset-0 bg-grid-pattern z-0 pointer-events-none"></div>
 
-<header class="w-full px-6 sm:px-10 py-5 flex justify-between items-center relative z-50" 
-        data-aos="fade-down">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-  <link rel="shortcut icon" href="favicon.ico">
-
-  <!-- Mobile -->
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-
-  <!-- Theme Color (Indigo/Violet) -->
-  <meta name="theme-color" content="#4F46E5">
-  
-  <div class="flex items-center gap-2.5 z-50">
-    <div class="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center text-white font-bold text-lg">
-      SM
-    </div>
+<header class="w-full px-6 sm:px-10 py-5 flex justify-between items-center relative z-50 bg-slate-50/50 backdrop-blur-sm sticky top-0" data-aos="fade-down">
+  <div class="flex items-center gap-3 sm:gap-4 z-50">
+    <img src="logo.png" alt="ShikshaManthan Logo" class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl shadow-lg shadow-indigo-600/30 object-cover">
     <span class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">ShikshaManthan</span>
   </div>
 
   <div class="flex items-center gap-2 sm:gap-4 z-50">
-    
     <div id="auth-area" class="flex items-center gap-2 sm:gap-4">
-      <button onclick="openLogin()" 
-              class="px-4 py-2 text-slate-600 font-medium rounded-full hover:bg-slate-200 transition-all text-sm sm:text-base">
-        Log In
-      </button>
-      
-      <button onclick="openSignup()"
-              class="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 text-white rounded-full font-medium text-sm sm:text-base shadow-md shadow-indigo-600/20 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
-        Get Started
-      </button>
+      <button onclick="openLogin()" class="hidden sm:block px-4 py-2 text-slate-600 font-medium rounded-full hover:bg-slate-200 transition-all text-sm">Log In</button>
+      <button onclick="openSignup()" class="px-5 py-2 bg-indigo-600 text-white rounded-full font-medium text-sm shadow-md shadow-indigo-600/20 hover:bg-indigo-700 hover:shadow-lg transition-all">Get Started</button>
     </div>
-
     <div id="profile-area" class="hidden flex items-center gap-3 sm:gap-6">
-      
-      <button onclick="logoutUser()"
-              class="hidden sm:block px-4 py-1.5 border border-red-200 text-red-500 rounded-full text-sm font-medium hover:bg-red-50 hover:border-red-300 transition">
-        Log out
-      </button>
-
-      <a href="dashboard.html" class="hidden sm:block text-slate-700 hover:text-indigo-600 font-medium transition">
-        Dashboard
-      </a>
-
-      <a href="dashboard.html" 
-         class="block w-10 h-10 sm:w-11 sm:h-11 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-md cursor-pointer hover:ring-4 hover:ring-indigo-100 transition-all">
-         <span class="text-lg">👤</span>
-      </a>
-
-      <button onclick="logoutUser()" class="sm:hidden text-red-500 text-sm font-medium ml-1">
-        Exit
+      <button onclick="logoutUser()" class="hidden sm:block px-4 py-1.5 border border-red-200 text-red-500 rounded-full text-sm font-medium hover:bg-red-50 hover:border-red-300 transition">Log out</button>
+      <button onclick="openDashboard()" class="block w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-md cursor-pointer hover:ring-4 hover:ring-indigo-100 transition-all">
+          <span class="text-lg">👤</span>
       </button>
     </div>
-
   </div>
 </header>
 
-<section class="relative z-10 flex-grow">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-
+<section class="relative z-10 min-h-[calc(100vh-88px)] flex items-center justify-center pb-10">
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+    
     <div class="space-y-6 sm:space-y-8 text-center lg:text-left order-2 lg:order-1" data-aos="fade-right">
       <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.2] tracking-tight">
         Build Your Program Logic
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 block mt-2">Step by Step</span>
       </h1>
-
       <p class="text-base sm:text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-        Design a <strong class="text-slate-800">clear, funder-ready education program</strong> using a guided,
-        gamified journey — without starting from a blank page.
+        Design a <strong class="text-slate-800">clear, funder-ready education program</strong> using a guided, gamified journey — without starting from a blank page.
       </p>
-
       <div class="flex flex-col sm:flex-row gap-4 pt-2 justify-center lg:justify-start">
-        <button id="primaryActionBtn"
-          onclick="startPrimaryAction()"
-          class="px-8 py-3.5 bg-indigo-600 text-white rounded-full font-semibold shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
+        <button id="primaryActionBtn" onclick="startPrimaryAction()" class="px-8 py-3.5 bg-indigo-600 text-white rounded-full font-semibold shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto">
           Start Free Trial
         </button>
-
         <button onclick="continueDraft()"
           class="px-8 py-3.5 border border-slate-200 text-slate-700 bg-white rounded-full font-semibold shadow-sm hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-300 w-full sm:w-auto">
           Continue Draft
@@ -338,120 +391,439 @@
     </div>
 
     <div class="relative w-full flex justify-center lg:justify-end order-1 lg:order-2" data-aos="fade-left">
-
+        
         <div class="absolute -top-10 -right-4 w-48 h-48 sm:w-72 sm:h-72 bg-violet-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float hidden sm:block"></div>
         <div class="absolute -bottom-10 -left-4 w-48 h-48 sm:w-72 sm:h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float-delayed hidden sm:block"></div>
 
-        <div class="glass-card-enhanced w-full max-w-lg p-6 sm:p-8 rounded-3xl relative z-10 transform hover:scale-[1.01] transition-transform duration-500 mx-auto">
+        <div class="phone-perspective-wrapper">
+            <div class="phone-3d">
+                <div class="phone-notch"></div>
+                
+                <div class="phone-screen-container bg-slate-50">
+                    
+                    <div class="screen-reflection"></div>
 
-            <h3 class="text-lg sm:text-2xl font-bold text-slate-800 mb-6 text-center lg:text-left">
-              What you’ll achieve
-            </h3>
+                    <div class="pt-12 pb-3 px-5 bg-white border-b border-slate-100 z-10 shadow-sm">
+                        <div class="flex justify-between items-center mb-1">
+                            <h3 class="text-lg font-bold text-slate-800">Features</h3>
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">ShikshaManthan Pro</p>
+                    </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div class="feature-box">Clear problem → outcome logic</div>
-                <div class="feature-box">Measurable indicators & score</div>
-                <div class="feature-box">System-aligned mapping</div>
-                <div class="feature-box">Review-ready LFA export</div>
+                    <div id="dynamic-feature-wrapper" class="marquee-wrapper">
+                        </div>
+
+                    <div class="h-16 bg-white border-t border-slate-100 flex justify-around items-center px-4 z-10">
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="w-5 h-5 bg-indigo-100 rounded-md flex items-center justify-center text-indigo-600 text-xs">🏠</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 opacity-40">
+                            <div class="w-5 h-5 bg-slate-100 rounded-md"></div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 opacity-40">
+                            <div class="w-5 h-5 bg-slate-100 rounded-md"></div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-28 h-1 bg-slate-300 rounded-full z-20"></div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+  </div>
+
+  <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity" onclick="document.getElementById('journey-map').scrollIntoView()">
+      <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Explore</span>
+      <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7-7-7"></path></svg>
+  </div>
+</section>
+
+<section class="relative py-24 bg-slate-50/50 border-t border-white backdrop-blur-sm overflow-hidden min-h-screen flex flex-col justify-center" id="journey-map">
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div class="absolute top-[10%] left-[5%] w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-[10%] right-[5%] w-96 h-96 bg-violet-200/20 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10 w-full">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="text-indigo-600 font-semibold tracking-wider text-sm uppercase">Interactive Demo</span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mt-2">Your Logic Roadmap</h2>
+            <p class="text-slate-600 mt-3 max-w-2xl mx-auto text-sm sm:text-base">
+                Click on the <strong>Level Circles</strong> below to open the details popup and see how the AI guides you.
+            </p>
+        </div>
+
+        <div class="relative w-full max-w-5xl mx-auto mb-10">
+            <div class="hidden md:grid grid-cols-4 gap-y-20 gap-x-4 relative p-4">
+                <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" style="overflow: visible;">
+                    <path d="M 120,80 L 850,80" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="8 4" fill="none"/>
+                    <path d="M 850,80 Q 950,80 950,180" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="8 4" fill="none"/>
+                    <path d="M 950,180 Q 950,280 850,280 L 120,280" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="8 4" fill="none"/>
+                    <path d="M 120,280 Q 20,280 20,380 L 20,380" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="8 4" fill="none"/>
+                    <path d="M 20,380 Q 20,480 120,480 L 600,480" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="8 4" fill="none"/>
+                </svg>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer" onclick="loadLevel(0)">
+                    <div class="level-circle w-16 h-16 rounded-2xl bg-slate-800 text-white flex items-center justify-center shadow-lg shadow-slate-500/30 z-10 border-4 border-white transition-all duration-300">
+                        <span class="text-2xl">🚩</span>
+                    </div>
+                    <div class="absolute -top-3 bg-indigo-600 text-[10px] text-white px-2 py-0.5 rounded-full font-bold shadow-md">START</div>
+                    <h4 class="mt-3 font-bold text-slate-700 text-center text-sm">Context Setup</h4>
+                </div>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer" onclick="loadLevel(1)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-md hover:shadow-indigo-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-indigo-600">L1</span>
+                    </div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">Define Your Problem</h4>
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded mt-1">14%</span>
+                </div>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer" onclick="loadLevel(2)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-md hover:shadow-indigo-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-indigo-600">L2</span>
+                    </div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">Tell Changes in Stakeholder</h4>
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded mt-1">28%</span>
+                </div>
+                <div class="level-node relative group flex flex-col items-center cursor-pointer" onclick="loadLevel(3)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-md hover:shadow-indigo-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-indigo-600">L3</span>
+                    </div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">Success Definition</h4>
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded mt-1">42%</span>
+                </div>
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-4 md:row-start-2 pt-16" onclick="loadLevel(4)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-md hover:shadow-indigo-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-indigo-600">L4</span>
+                    </div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">AI-Powered Action Plan</h4>
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded mt-1">56%</span>
+                </div>
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-3 md:row-start-2 pt-16" onclick="loadLevel(5)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-md hover:shadow-indigo-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-indigo-600">L5</span>
+                    </div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">Your suggested stakeholder action </h4>
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded mt-1">70%</span>
+                </div>
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-2 md:row-start-2 pt-16" onclick="loadLevel(6)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center shadow-md hover:shadow-indigo-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-indigo-600">L6</span>
+                    </div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">Your action Plan</h4>
+                    <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 rounded mt-1">84%</span>
+                </div>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-1 md:row-start-2 pt-16" onclick="loadLevel(7)">
+                    <div class="level-circle w-16 h-16 rounded-full bg-green-50 border-2 border-green-400 flex items-center justify-center shadow-md hover:shadow-green-200 z-10 transition-all duration-300">
+                        <span class="font-bold text-green-600">L7</span>
+                    </div>
+                    <div class="absolute -top-3 left-10 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded shadow">Done!</div>
+                    <h4 class="mt-3 font-semibold text-slate-600 text-center text-sm">Indicators</h4>
+                    <span class="text-[10px] bg-green-100 text-green-700 px-1.5 rounded mt-1 font-bold">100%</span>
+                </div>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-1 md:row-start-3 pt-16" onclick="loadLevel(8)">
+                    <div class="level-circle w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/30 z-10 transition-all duration-300">
+                        <span class="text-xl">📊</span>
+                    </div>
+                    <h4 class="mt-3 font-bold text-slate-700 text-center text-sm">Review Your Personalized LFA</h4>
+                </div>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-2 md:row-start-3 pt-16" onclick="loadLevel(9)">
+                     <div class="level-circle w-16 h-16 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/30 z-10 transition-all duration-300">
+                        <span class="text-xl">📥</span>
+                    </div>
+                    <h4 class="mt-3 font-bold text-slate-700 text-center text-sm">Export Your LFA</h4>
+                </div>
+
+                <div class="level-node relative group flex flex-col items-center cursor-pointer md:col-start-3 md:row-start-3 pt-16" onclick="loadLevel(10)">
+                     <div class="level-circle w-16 h-16 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-violet-600/30 z-10 transition-all duration-300">
+                        <span class="text-xl">🏆</span>
+                    </div>
+                    <h4 class="mt-3 font-bold text-slate-700 text-center text-sm">See the Impact of your LFA</h4>
+                </div>
             </div>
 
-            <div class="mt-6 sm:mt-8 w-fit mx-auto lg:mx-0 bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-full text-xs sm:text-sm text-indigo-700 font-medium flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Avg time: <strong class="text-indigo-900">45 mins</strong>
+            <div class="md:hidden">
+                 <p class="text-center text-xs text-slate-400 mb-4">(Tap bubbles to view details)</p>
+                 <div class="flex flex-wrap justify-center gap-4 px-4">
+                     <button onclick="loadLevel(0)" class="px-4 py-2 bg-slate-800 text-white rounded-full text-xs font-bold shadow-lg">START</button>
+                     <button onclick="loadLevel(1)" class="w-10 h-10 rounded-full bg-white border border-indigo-200 text-indigo-600 text-xs font-bold shadow-sm">L1</button>
+                     <button onclick="loadLevel(2)" class="w-10 h-10 rounded-full bg-white border border-indigo-200 text-indigo-600 text-xs font-bold shadow-sm">L2</button>
+                     <button onclick="loadLevel(3)" class="w-10 h-10 rounded-full bg-white border border-indigo-200 text-indigo-600 text-xs font-bold shadow-sm">L3</button>
+                     <button onclick="loadLevel(4)" class="w-10 h-10 rounded-full bg-white border border-indigo-200 text-indigo-600 text-xs font-bold shadow-sm">L4</button>
+                     <button onclick="loadLevel(5)" class="w-10 h-10 rounded-full bg-white border border-indigo-200 text-indigo-600 text-xs font-bold shadow-sm">L5</button>
+                     <button onclick="loadLevel(6)" class="w-10 h-10 rounded-full bg-white border border-indigo-200 text-indigo-600 text-xs font-bold shadow-sm">L6</button>
+                     <button onclick="loadLevel(7)" class="w-10 h-10 rounded-full bg-green-100 border border-green-300 text-green-700 text-xs font-bold shadow-sm">L7</button>
+                     <button onclick="loadLevel(10)" class="px-4 py-2 bg-indigo-600 text-white rounded-full text-xs font-bold shadow-lg">FINISH</button>
+                 </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div id="levelModal" onclick="closeLevelModal(event)" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 px-4">
+    <div id="levelModalContent" class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative transform scale-95 transition-all duration-300 overflow-hidden">
+        <button onclick="closeLevelModal(null, true)" class="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-800 transition bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer">✕</button>
+        <div class="h-2 w-full bg-gradient-to-r from-indigo-500 to-violet-500"></div>
+        <div class="p-6 sm:p-8">
+            <div class="mb-6 border-b border-slate-100 pb-4">
+                 <span id="modal-progress" class="text-[10px] font-bold tracking-wider uppercase text-indigo-600 bg-indigo-50 px-2 py-1 rounded inline-block mb-2">Level 1</span>
+                 <h3 id="modal-title" class="text-2xl font-bold text-slate-800">Problem Definition</h3>
+                 <p id="modal-desc" class="text-sm text-slate-500 mt-1">Description goes here.</p>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-12 h-12 bg-slate-200/50 rounded-bl-full -mr-6 -mt-6 pointer-events-none"></div>
+                    <div class="flex items-start gap-3 relative z-10">
+                        <div class="w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs shadow-sm mt-0.5">👤</div>
+                        <div>
+                            <h5 class="text-[10px] font-bold uppercase text-slate-500 mb-1 tracking-wide">User Action</h5>
+                            <p id="modal-user" class="text-sm text-slate-700 font-medium">User inputs go here.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-blue-50/70 rounded-xl p-4 border border-blue-100">
+                         <div class="flex items-start gap-2">
+                            <span class="text-blue-500 text-lg mt-0.5">⚙️</span>
+                            <div>
+                                <h5 class="text-[10px] font-bold uppercase text-blue-600 mb-1 tracking-wide">System Logic</h5>
+                                <p id="modal-system" class="text-xs text-blue-900 leading-relaxed">System logic here.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-orange-50/70 rounded-xl p-4 border border-orange-100">
+                         <div class="flex items-start gap-2">
+                            <span class="text-orange-500 text-lg mt-0.5">🤖</span>
+                            <div>
+                                <h5 class="text-[10px] font-bold uppercase text-orange-600 mb-1 tracking-wide">AI Feedback</h5>
+                                <p id="modal-ai" class="text-xs text-orange-900 leading-relaxed">AI feedback here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeLevelModal(null, true)" class="px-5 py-2 bg-indigo-50 text-indigo-600 font-medium rounded-lg text-sm hover:bg-indigo-100 transition">Got it</button>
             </div>
         </div>
     </div>
+</div>
 
-  </div>
-
-  <div id="authOverlay"
-    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[100] transition-opacity duration-300 px-4">
-
+<div id="authOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-[100] transition-opacity duration-300 px-4">
     <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative animate-[fade-in_0.3s_ease-out]">
-
-      <button onclick="closeAuthModal()"
-        class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer z-50">
-        ✕
-      </button>
-
-      <h2 id="authTitle" class="text-2xl font-bold mb-6 text-center text-slate-800">
-        Welcome back
-      </h2>
-
-      <div class="space-y-3 mb-6">
-        <button onclick="loginWithGoogle()"
-          class="w-full flex items-center justify-center gap-3 border border-slate-200 rounded-xl py-2.5 text-slate-700 font-medium hover:bg-slate-50 transition-colors">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5"/>
-          Continue with Google
-        </button>
-
-        <button onclick="loginWithApple()"
-          class="w-full flex items-center justify-center gap-3 border border-black rounded-xl py-2.5 bg-black text-white hover:bg-gray-800 transition-colors">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" class="w-5 invert"/>
-          Continue with Apple
-        </button>
-      </div>
-
-      <div class="flex items-center gap-3 my-6">
-        <div class="flex-1 h-px bg-slate-200"></div>
-        <span class="text-xs font-medium text-slate-400 uppercase tracking-wide">or with email</span>
-        <div class="flex-1 h-px bg-slate-200"></div>
-      </div>
-
-      <div class="space-y-4">
-          <div>
-              <label class="text-sm font-semibold text-slate-700 block mb-1">Email Address</label>
-              <input id="email" type="email" placeholder="name@company.com"
-                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"/>
-          </div>
-
-          <div>
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer z-50">✕</button>
+        <h2 id="authTitle" class="text-2xl font-bold mb-6 text-center text-slate-800">Welcome back</h2>
+        <div class="space-y-3 mb-6">
+            <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 border border-slate-200 rounded-xl py-2.5 text-slate-700 font-medium hover:bg-slate-50 transition-colors">
+                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5"/> Continue with Google
+            </button>
+            <button onclick="loginWithApple()" class="w-full flex items-center justify-center gap-3 border border-black rounded-xl py-2.5 bg-black text-white hover:bg-gray-800 transition-colors">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" class="w-5 invert"/>
+                Continue with Apple
+            </button>
+        </div>
+        <div class="flex items-center gap-3 my-6">
+            <div class="flex-1 h-px bg-slate-200"></div><span class="text-xs font-medium text-slate-400 uppercase tracking-wide">or with email</span><div class="flex-1 h-px bg-slate-200"></div>
+        </div>
+        <div class="space-y-4">
+            <div>
+              <label class="text-sm font-semibold text-slate-700 block mb-1">Email</label>
+              <input id="email" type="email" placeholder="name@company.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"/>
+            </div>
+            <div>
               <label class="text-sm font-semibold text-slate-700 block mb-1">Password</label>
-              <input id="password" type="password" placeholder="••••••••"
-                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"/>
-          </div>
-      </div>
-
-      <div class="flex justify-end mt-2 mb-6">
-          <p class="text-sm text-indigo-600 hover:text-indigo-800 cursor-pointer font-medium">
-            Forgot password?
-          </p>
-      </div>
-
-      <button onclick="handleLogin()"
-        class="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
-        <span id="authBtnText">Log in</span>
-      </button>
-
-      <p id="authSwitchText" class="text-sm text-center mt-6 text-slate-500"></p>
-
+              <input id="password" type="password" placeholder="••••••••" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"/>
+            </div>
+        </div>
+        <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white py-3.5 mt-6 rounded-xl font-bold shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
+          <span id="authBtnText">Log in</span>
+        </button>
+        <p id="authSwitchText" class="text-sm text-center mt-6 text-slate-500">
+           Don’t have an account? 
+           <button onclick="openSignup()" class="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline">Sign up</button>
+        </p>
     </div>
-  </div>
+</div>
 
-</section>
-
-<section class="text-center py-8 text-sm text-slate-400 font-medium">
+<section class="text-center py-8 text-sm text-slate-400 font-medium border-t border-slate-200 bg-white">
   Trusted by NGOs, CSOs & education partners
 </section>
 
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
-  AOS.init({
-    duration: 800,
-    easing: "ease-out-cubic",
-    once: true,
-    offset: 50
-  });
+  AOS.init({ duration: 800, easing: "ease-out-cubic", once: true, offset: 50 });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // Basic auth state check placeholder until Firebase loads
-    if (localStorage.getItem("currentUser")) {
-      document.getElementById("auth-area").classList.add("hidden");
-      document.getElementById("profile-area").classList.remove("hidden");
-    }
-  });
+  /* --- DYNAMIC APP LIST INJECTION --- */
+  const featureList = [
+      { text: "Clarification of Your Problem", icon: "🧠" },
+      { text: "Stakeholder Maping", icon: "🗺️" },
+      { text: "Your Action Plan", icon: "📋" },
+      { text: "Smart Indicators", icon: "📊" },
+      { text: "Practice Shifts", icon: "⚡" },
+      { text: "Success Definition", icon: "🔗" },
+      { text: "Funder-Ready PDF", icon: "📥" },
+      { text: "Gap Analysis", icon: "🔍" },
+      { text: "Outcome Validation", icon: "✅" }
+  ];
+
+  function renderFeatures() {
+      const container = document.getElementById("dynamic-feature-wrapper");
+      if(!container) return;
+
+      // Duplicates for seamless infinite scrolling
+      const fullList = [...featureList, ...featureList, ...featureList]; 
+      
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "marquee-content"; 
+
+      fullList.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "app-card";
+          card.innerHTML = `
+            <div class="app-icon-box">${item.icon}</div>
+            <div class="font-semibold text-slate-700 text-xs sm:text-sm">${item.text}</div>
+          `;
+          contentDiv.appendChild(card);
+      });
+
+      container.appendChild(contentDiv);
+  }
+
+  renderFeatures();
+
+  /* --- LEVEL DATA OBJECT (ADDED TO FIX POPUPS) --- */
+  const levels = [
+        {
+            title: "Context Setup",
+            progress: "Level 0",
+            desc: "Define the core identity of your intervention.",
+            user: "Enter your Program Name,select your state &city and system level.",
+            system: "Sets the scope for AI analysis ",
+            ai: "No Need here"
+        },
+        {
+            title: "Problem Definition",
+            progress: "Level 1",
+            desc: "The anchor of your logic model.",
+            user: "Describe the core educational challenge you are facing.",
+            system: "We Analyze root causes of Teacher's Problem & generate adaptive Questions with SYSTEM-INSTRUCTION.",
+            ai: "Real-Time Assistance for You: This Is the Strength of Our System."
+        },
+        {
+            title: "Stakeholder-Level-Changes",
+            progress: "Level 2",
+            desc: "Define the primary beneficiary shift.",
+            user: "Identify what the stakeholder will know or do differently.",
+            system: "Connects the Problem (L1) directly to a targeted Student Outcome.",
+            ai: "Suggests Bloom's Taxonomy verbs to make outcomes measurable."
+        },
+        {
+            title: "Success Definition",
+            progress: "Level 3",
+            desc: "The 'North Star' for your project.",
+            user: "Write a 1-sentence statement of what ultimate success looks like.",
+            system: "Checks for logic gaps between Stakeholder-Level-Changes & Success Definition.",
+            ai: "Refines your statement to be concise and result-oriented."
+        },
+        {
+            title: "AI-Powered Action Plan",
+            progress: "Level 4",
+            desc: "Mapping the ecosystem.",
+            user: "Select Teachers, Parents, or Govt Officials involved.",
+            system: "Generates a dynamic stakeholder matrix based on capacity & limits of stakeholders.",
+            ai: "AI provides explanations of required actions for the selected stakeholder"
+        },
+        {
+            title: "Practice Changes required",
+            progress: "Level 5",
+            desc: "Intermediate behavior shifts.",
+            user: "Define what stakeholders must do to support student change.",
+            system: "Establishes the 'Theory of Change' linking actors to outcomes.",
+            ai: "Checks if requested changes are realistic for the specified stakeholder."
+        },
+        {
+            title: "Your Action Plan",
+            progress: "Level 6",
+            desc: "The actual work on the ground.",
+            user: "You have to make List of workshops, training sessions you will going to conduct.",
+            system: "Calculates dosage and frequency required for outcomes.",
+            ai: "Identifies if activities are sufficient to achieve the L5 practice shifts."
+        },
+        {
+            title: "Indicators & Evidence",
+            progress: "Level 7",
+            desc: "Measuring the impact.",
+            user: "Define how you will track progress (Quantitative & Qualitative).",
+            system: "Generates an M&E (Monitoring & Evaluation) framework.",
+            ai: "AI will evaluate that Indicators & Evidence given by you is correct or not."
+        },
+        {
+             title: "Review Logical Final Framework",
+             progress: "Level 8",
+             desc: "Comprehensive logic check.",
+             user: "Review the full chain from Context to Indicators.",
+             system: "Calculates an 'Alignment Score' based on logical coherence.",
+             ai: "Highlights weak links (e.g., 'Activities do not match Outcomes')."
+        },
+        {
+             title: "Export LFA",
+             progress: "Level 9",
+             desc: "Generate your final document.",
+             user: "Select format (PDF/Word) and visual style.",
+             system: "Compiles all data into a standard Logical Framework Analysis matrix.",
+             ai: "Drafts an Executive Summary to accompany the table."
+        },
+        {
+             title: "Impact Analysis",
+             progress: "Level 10",
+             desc: "Long-term projections.",
+             user: "Define the 3-5 year vision.",
+             system: "Projects potential ROI and social return.",
+             ai: "Suggests scaling strategies based on current design."
+        }
+  ];
+
+  /* --- MODAL FUNCTIONS --- */
+  function loadLevel(index) {
+        const data = levels[index];
+        // Safety check if index is out of bounds
+        if (!data) return;
+
+        const modal = document.getElementById('levelModal');
+        const content = document.getElementById('levelModalContent');
+
+        document.getElementById('modal-title').innerText = data.title;
+        document.getElementById('modal-progress').innerText = data.progress;
+        document.getElementById('modal-desc').innerText = data.desc;
+        document.getElementById('modal-user').innerHTML = data.user;
+        document.getElementById('modal-system').innerHTML = data.system;
+        document.getElementById('modal-ai').innerHTML = data.ai;
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+  }
+
+  function closeLevelModal(e, force) {
+      if (force || (e && e.target.id === 'levelModal')) {
+          const modal = document.getElementById('levelModal');
+          const content = document.getElementById('levelModalContent');
+          modal.classList.add('opacity-0');
+          content.classList.remove('scale-100');
+          content.classList.add('scale-95');
+          setTimeout(() => { modal.classList.add('hidden'); }, 300);
+      }
+  }
 </script>
 
 </body>
