@@ -242,13 +242,13 @@ function updateActivity(index, field, value) {
   evaluateState();
 }
 
+
+
 /* ================= STATE EVALUATION ================= */
+
 
 function evaluateState() {
   const invalid = lfaData.activities.some(a => !a.practice || !a.text || a.text.length < 15);
-
-  // Update Progress Bar (Visual only for now)
-  // const pct = invalid ? 40 : 100;
 
   if (invalid) {
     updateFeedback("⚠️ Ensure every activity is described clearly (>15 chars) and linked to a goal.", "text-yellow-600", "🧐");
@@ -256,9 +256,20 @@ function evaluateState() {
     return;
   }
 
+  const meaningless = lfaData.activities.some(a =>
+    a.text && a.text.trim().length > 0 && isMeaninglessText(a.text)
+  );
+
+  if (meaningless) {
+    alert("Your input is not related to Education System");
+    lockContinue();
+    return;
+  }
+
   updateFeedback("✅ Perfect! Your action plan is actionable and aligned.", "text-green-600", "🚀");
   unlockContinue();
 }
+
 
 function updateFeedback(msg, colorClass, emoji) {
     const fb = document.getElementById("aiFeedback");
@@ -341,6 +352,20 @@ function saveAndNext() {
 function goBack() {
   window.location.href = "level5.html";
 }
+
+function isMeaninglessText(text) {
+  if (!text || text.trim().length < 5) return false; 
+  // ⬆️ prevents alert on page load
+
+  const words = text.trim().split(/\s+/);
+
+  // words without vowels OR very short words are usually random
+  const randomWords = words.filter(w => w.length < 4 || !/[aeiou]/i.test(w));
+
+  return (randomWords.length / words.length) > 0.6;
+}
+
+
 </script>
 
 </body>
