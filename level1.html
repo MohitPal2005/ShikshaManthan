@@ -294,6 +294,26 @@ async function submitProblem() {
 
     const data = await res.json();
 
+    // 🚫 SPECIAL CASE: Input not related to School Education
+const notRelatedMsg = "Your input is not Related to my School Education System";
+
+// If backend sends this message
+if (
+  data?.message?.includes(notRelatedMsg) ||
+  data?.follow_up_questions?.includes(notRelatedMsg)
+) {
+  // Show message ONLY in AI Assistant panel
+  feedbackEl.classList.remove("animate-pulse", "text-indigo-600");
+  feedbackEl.classList.add("text-red-500", "font-medium");
+  feedbackEl.innerText = `⚠️ ${notRelatedMsg}`;
+
+  // Reset AI face
+  if (aiAvatar) aiAvatar.innerText = "🤖";
+
+  // ❌ STOP HERE – do NOT show adaptive questions
+  return;
+}
+
     // 3. Success State
     feedbackEl.classList.remove("animate-pulse", "text-indigo-600");
     feedbackEl.classList.add("text-green-600", "font-medium");
