@@ -6,6 +6,7 @@
   <title>Review Program Logic | ShikshaManthan</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -93,18 +94,28 @@
 
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.1s;">
             <div class="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-red-200 text-lg flex-shrink-0">1</div>
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">The Problem</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">The Problem of Teacher</h3>
             
             <div class="flex-grow overflow-hidden">
-                <p id="revProblem" class="text-sm font-medium text-slate-800 leading-relaxed break-words whitespace-pre-wrap">
-                    Loading...
-                </p>
+               <div id="revProblem" class="space-y-4 text-sm text-slate-800">
+                    <p id="revProblemText" class="font-medium leading-relaxed whitespace-pre-wrap">
+                        Loading...
+                    </p>
+
+                    <div id="revProblemDetails" class="hidden">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wide">
+                            Clarifying Insights (Level 1)
+                        </h4>
+                        <ul id="revProblemQA" class="space-y-2 text-xs text-slate-700"></ul>
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.2s;">
             <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-indigo-200 text-lg flex-shrink-0">2</div>
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Change Agents</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Required Actions of Stakeholders</h3>
             
             <div class="space-y-3 flex-grow overflow-hidden">
                 <div>
@@ -120,7 +131,7 @@
 
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.3s;">
             <div class="w-10 h-10 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-violet-200 text-lg flex-shrink-0">3</div>
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">The Outcome</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Expected Outcomes if Problem solved</h3>
             
             <div class="flex-grow overflow-hidden flex flex-col">
                 <p id="revOutcome" class="text-sm font-medium text-slate-800 leading-relaxed mb-3 break-words whitespace-pre-wrap">
@@ -134,7 +145,7 @@
 
         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-lg relative group hover:-translate-y-1 transition-transform duration-300 animate-card h-full min-w-0 flex flex-col" style="animation-delay: 0.4s;">
             <div class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold mb-4 shadow-sm border border-green-200 text-lg flex-shrink-0">4</div>
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Indicators</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex-shrink-0">Evidence & Indicators for Success</h3>
             
             <div class="flex-grow overflow-hidden">
                 <ul id="revIndicators" class="text-sm text-slate-700 space-y-2 break-words"></ul>
@@ -176,7 +187,7 @@
 
         <div class="bg-white border border-red-200 rounded-xl p-5 shadow-sm h-full flex flex-col">
             <div class="flex items-center gap-2 mb-3 text-red-600 font-bold flex-shrink-0">
-                <span class="text-xl">⚠️</span> Attention Needed
+                <span class="text-xl">⚠️</span> Attention
             </div>
             <ul id="aiGaps" class="text-xs text-slate-600 space-y-2 break-words flex-grow"></ul>
         </div>
@@ -186,6 +197,14 @@
                 <span class="text-xl">💡</span> Suggestions
             </div>
             <ul id="aiSuggestions" class="text-xs text-slate-600 space-y-2 break-words flex-grow"></ul>
+        </div>
+
+        <!-- ✅ NEW BLOCK: Overall Verdict -->
+        <div class="bg-white border border-indigo-200 rounded-xl p-5 shadow-sm h-full flex flex-col">
+            <div class="flex items-center gap-2 mb-3 text-indigo-700 font-bold flex-shrink-0">
+                <span class="text-xl">📌</span> Overall Verdict
+            </div>
+            <ul id="aiVerdict" class="text-xs text-slate-600 space-y-2 break-words flex-grow"></ul>
         </div>
 
     </div>
@@ -198,12 +217,13 @@
       ← Make Edits
     </button>
 
-    <button onclick="goNext()"
-      class="group relative px-8 py-4 rounded-full bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all overflow-hidden">
-      <div class="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -translate-x-full"></div>
-      Export & Share LFA →
+    <button onclick="exportAndProceed()"
+    class="group relative px-8 py-4 rounded-full bg-indigo-600 text-white font-bold">
+    Export & Share LFA →
     </button>
+
   </section>
+
 
 </main>
 
@@ -220,18 +240,56 @@ fetch("components/header.html")
 
 // 2. POPULATE DATA
 function populateReview() {
-  // Text Fields
-  document.getElementById("revProblem").innerText = lfaData.problem || "Not defined";
-  document.getElementById("revOutcome").innerText = lfaData.studentOutcome || "Not defined";
-  document.getElementById("revSuccess").innerText = lfaData.successDefinition || "Not defined";
+  // --- PROBLEM (LEVEL 1) ---
+  const problemTextEl = document.getElementById("revProblemText");
+  const detailsBox = document.getElementById("revProblemDetails");
+  const qaList = document.getElementById("revProblemQA");
 
-  // Lists
+  if (problemTextEl) {
+    problemTextEl.innerText = lfaData.problem || "Not defined";
+  }
+
+  if (
+    detailsBox &&
+    qaList &&
+    Array.isArray(lfaData.followUpAnswers) &&
+    lfaData.followUpAnswers.length > 0
+  ) {
+    detailsBox.classList.remove("hidden");
+    qaList.innerHTML = "";
+
+    lfaData.followUpAnswers.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.className = "bg-slate-50 border border-slate-200 rounded-lg p-2";
+
+      li.innerHTML = `
+        <p class="font-semibold text-slate-600">
+          Q${index + 1}. ${item.question}
+        </p>
+        <p class="text-slate-700 mt-1">→ ${item.answer}</p>
+      `;
+
+      qaList.appendChild(li);
+    });
+  } else if (detailsBox) {
+    detailsBox.classList.add("hidden");
+  }
+
+  // --- OTHER FIELDS ---
+  document.getElementById("revOutcome").innerText =
+    lfaData.studentOutcome || "Not defined";
+
+  document.getElementById("revSuccess").innerText =
+    lfaData.successDefinition || "Not defined";
+
   fillList("revStakeholders", lfaData.stakeholders);
   fillList("revPractices", Object.values(lfaData.practiceChanges || {}));
-  fillList("revIndicators", (lfaData.indicators || []).map(i => `✅ ${i.text}`));
+  fillList(
+    "revIndicators",
+    (lfaData.indicators || []).map(i => `✅ ${i.text}`)
+  );
 
-  // Analytics
-  calculateAlignment();
+  calculateLevel1Alignment();
   generateAISummary();
 }
 
@@ -251,60 +309,178 @@ function fillList(id, items) {
 }
 
 // 3. LOGIC ANALYTICS
-function calculateAlignment() {
-  let score = 0;
-  if (lfaData.problem && lfaData.problem.length > 20) score += 15;
-  if (lfaData.studentOutcome && lfaData.studentOutcome.length > 20) score += 15;
-  if (lfaData.successDefinition) score += 15;
-  if (lfaData.stakeholders && lfaData.stakeholders.length >= 2) score += 15;
-  if (lfaData.practiceChanges && Object.keys(lfaData.practiceChanges).length > 0) score += 15;
-  if (lfaData.indicators && lfaData.indicators.length > 0) score += 25;
+// function calculateAlignment() {
+//   let score = 0;
+//   if (lfaData.problem && lfaData.problem.length > 20) score += 15;
+//   if (lfaData.studentOutcome && lfaData.studentOutcome.length > 20) score += 15;
+//   if (lfaData.successDefinition) score += 15;
+//   if (lfaData.stakeholders && lfaData.stakeholders.length >= 2) score += 15;
+//   if (lfaData.practiceChanges && Object.keys(lfaData.practiceChanges).length > 0) score += 15;
+//   if (lfaData.indicators && lfaData.indicators.length > 0) score += 25;
 
-  // Cap at 100
-  if(score > 100) score = 100;
+//   // Cap at 100
+//   if(score > 100) score = 100;
 
-  // Update Visuals
-  document.getElementById("alignmentText").innerText = score + "%";
+//   // Update Visuals
+//   document.getElementById("alignmentText").innerText = score + "%";
   
-  // Label Logic
-  const label = document.getElementById("alignmentLabel");
-  if(score >= 80) {
-      label.innerText = "Excellent Alignment";
-      label.className = "px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold uppercase tracking-wide";
-  } else if (score >= 50) {
-      label.innerText = "Good Start";
-      label.className = "px-3 py-1 rounded-full bg-yellow-500 text-white text-xs font-bold uppercase tracking-wide";
-  } else {
-      label.innerText = "Needs Refinement";
-      label.className = "px-3 py-1 rounded-full bg-red-500 text-white text-xs font-bold uppercase tracking-wide";
-  }
+//   // Label Logic
+//   const label = document.getElementById("alignmentLabel");
+//   if(score >= 80) {
+//       label.innerText = "Excellent Alignment";
+//       label.className = "px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold uppercase tracking-wide";
+//   } else if (score >= 50) {
+//       label.innerText = "Good Start";
+//       label.className = "px-3 py-1 rounded-full bg-yellow-500 text-white text-xs font-bold uppercase tracking-wide";
+//   } else {
+//       label.innerText = "Needs Refinement";
+//       label.className = "px-3 py-1 rounded-full bg-red-500 text-white text-xs font-bold uppercase tracking-wide";
+//   }
+// }
+/**
+ * TASK: Fetch Level 1 Score and Update System Alignment UI
+ */
+
+
+// Helper to update the Visual Gauge
+function updateAlignmentUI(score) {
+    // Clamp score 0-100
+    if (score > 100) score = 100;
+    if (score < 0) score = 0;
+
+    // Update Number
+    document.getElementById("alignmentText").innerText = score + "%";
+
+    // Update Circle Rotation (360deg = 100%)
+    // The gauge logic in your CSS relies on a rotated border. 
+    // This targets the div with the indigo border.
+    const gaugeCircle = document.querySelector("#alignmentText").previousElementSibling;
+    if (gaugeCircle) {
+        const degrees = (score / 100) * 360;
+        gaugeCircle.style.transform = `rotate(${degrees}deg)`;
+        
+        // Dynamic Color: Red (<50), Yellow (50-79), Green (80+)
+        let colorClass = "border-red-500";
+        let labelText = "Needs Focus";
+        let labelColor = "bg-red-500";
+
+        if (score >= 80) {
+            colorClass = "border-green-500";
+            labelText = "High Alignment";
+            labelColor = "bg-green-500";
+        } else if (score >= 50) {
+            colorClass = "border-yellow-500";
+            labelText = "Moderate";
+            labelColor = "bg-yellow-500";
+        }
+
+        // Reset and add new color class
+        gaugeCircle.className = `absolute inset-0 rounded-full border-8 ${colorClass} border-t-transparent border-l-transparent transition-all duration-1000`;
+        
+        // Update Label
+        const labelEl = document.getElementById("alignmentLabel");
+        labelEl.innerText = labelText;
+        labelEl.className = `px-3 py-1 rounded-full ${labelColor} text-white text-xs font-bold uppercase tracking-wide`;
+    }
 }
 
 // 4. AI GENERATION
-function generateAISummary() {
-  const strengths = [];
-  const gaps = [];
-  const suggestions = [];
+// CONFIG: Define your backend URL
+const BACKEND_URL = "https://shivam-99x-level1-undestandingscore.hf.space";
 
-  // Problem Logic
-  if (lfaData.problem && lfaData.problem.length > 50) strengths.push("Problem definition is detailed.");
-  else gaps.push("Problem definition is brief.");
+/**
+ * TASK 1: Extract Problem & QA and send to Backend
+ * Replaces the old local generateAISummary()
+ */
+async function generateAISummary() {
+    // 1. Extract Data from DOM
+    const problemText = document.getElementById("revProblemText").innerText;
+    const qaContainer = document.getElementById("revProblemQA");
+    const qaText = qaContainer ? qaContainer.innerText : ""; // extracted text from Q&A list
 
-  // Logic Chain
-  if (lfaData.indicators && lfaData.indicators.length > 0) strengths.push("Evidence layer (Indicators) is present.");
-  else gaps.push("Missing indicators to measure success.");
+    // 2. Prepare Context String
+    const contextData = `
+    [PROBLEM START]
+    ${problemText}
+    [PROBLEM END]
 
-  // System
-  if (lfaData.stakeholders && lfaData.stakeholders.length >= 2) strengths.push("Multi-stakeholder approach adopted.");
-  else gaps.push("System map is too simple (1 actor).");
+    [CLARIFICATIONS START]
+    ${qaText}
+    [CLARIFICATIONS END]
+    `;
 
-  // Suggestions
-  suggestions.push("Ensure your indicators directly measure the student behavior mentioned in the Outcome.");
-  suggestions.push("Check if the budget (Level 8) matches these activities.");
+    // 3. UI Loading State (Optional but recommended)
+    document.getElementById("aiStrengths").innerHTML = "<li class='animate-pulse'>Analyzing...</li>";
+    document.getElementById("aiGaps").innerHTML = "<li class='animate-pulse'>Scanning...</li>";
+    document.getElementById("aiSuggestions").innerHTML = "<li class='animate-pulse'>Thinking...</li>";
 
-  fillList("aiStrengths", strengths);
-  fillList("aiGaps", gaps);
-  fillList("aiSuggestions", suggestions);
+    try {
+        // 4. Send to Backend
+        const response = await fetch(`${BACKEND_URL}/review-level2`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                analysis_context: contextData,
+                // We ask the AI to strictly format the output for Task 2
+                user_feedback: "Analyze this logic. Output strictly 3 sections. Use EXACTLY these headers: [STRENGTHS], [ATTENTION], [SUGGESTIONS]. Do not add words to the headers. Use bullet points."
+            })
+        });
+
+        const data = await response.json();
+        
+        // Trigger Task 2
+        if (data && data.result) {
+            parseAndInjectAIResponse(data.result);
+        }
+
+    } catch (error) {
+        console.error("AI Fetch Error:", error);
+        document.getElementById("aiStrengths").innerHTML = "<li class='text-red-500'>Connection failed.</li>";
+    }
+}
+
+/**
+ * TASK 2: Split Response & Inject into Columns
+ */
+ function parseAndInjectAIResponse(textBlock) {
+    const fillColumn = (elementId, content) => {
+        const ul = document.getElementById(elementId);
+        ul.innerHTML = ""; 
+        if (!content) return;
+        const lines = content.split('\n')
+            .map(line => line.replace(/^[-*•]\s*/, '').trim())
+            .filter(line => line.length > 0);
+        lines.forEach(line => {
+            const li = document.createElement("li");
+            li.className = "flex gap-2 items-start";
+            li.innerHTML = `<span>${line}</span>`;
+            ul.appendChild(li);
+        });
+    };
+
+    let strengths = "";
+    let attention = "";
+    let suggestions = "";
+
+    // FIXED REGEX: matches [ATTENTION...] instead of strictly [ATTENTION]
+    if (textBlock.match(/\[(STRENGTHS|ATTENTION|SUGGESTIONS)/)) {
+        const parts = textBlock.split(/\[(STRENGTHS|ATTENTION|SUGGESTIONS).*?\]/);
+        
+        for (let i = 1; i < parts.length; i += 2) {
+            const header = parts[i];   // This will be just "ATTENTION" (or STRENGTHS/SUGGESTIONS)
+            const content = parts[i + 1];
+
+            if (header === "STRENGTHS") strengths += content; // += handles if AI splits attention into multiple blocks
+            else if (header === "ATTENTION") attention += content;
+            else if (header === "SUGGESTIONS") suggestions += content;
+        }
+    } else {
+        suggestions = textBlock;
+    }
+
+    fillColumn("aiStrengths", strengths);
+    fillColumn("aiGaps", attention);
+    fillColumn("aiSuggestions", suggestions);
 }
 
 // 5. NAV
@@ -317,6 +493,199 @@ function goNext() {
   window.location.href = "export.html"; 
   // alert("Ready for Export!");
 }
+
+function downloadReviewText() {
+  generateAndStoreReviewPDF(true);
+}
+
+function exportAndProceed() {
+  // 1️⃣ PDF generate + store (NO download)
+  generateAndStoreReviewPDF(false);
+
+  // 2️⃣ Next page
+  window.location.href = "export.html";
+}
+
+
+// ... all your other functions (goBack, goNext, downloadReviewText, etc.) ...
+
+// --- PASTE THESE TWO FUNCTIONS HERE AT THE BOTTOM ---
+
+async function calculateLevel1Alignment() {
+    // 1. Extract Data
+    const problemText = document.getElementById("revProblemText").innerText;
+    
+    // Extract Q&A pairs
+    const qaPairs = [];
+    document.querySelectorAll('#revProblemQA li').forEach(li => {
+        const text = li.innerText; 
+        const parts = text.split('→'); 
+        if (parts.length >= 2) {
+            qaPairs.push({
+                question: parts[0].replace(/Q\d+\./, '').trim(),
+                answer: parts[1].trim()
+            });
+        }
+    });
+
+    // 2. Loading State
+    document.getElementById("alignmentText").innerText = "...";
+    document.getElementById("alignmentLabel").innerText = "Analyzing...";
+
+    try {
+        // 3. Send to Backend
+        const response = await fetch(`${BACKEND_URL}/submit-level1`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                problem: problemText,
+                followUpAnswers: qaPairs
+            })
+        });
+
+        const data = await response.json();
+        
+        // 4. Extract Score
+        let score = 0;
+        if (data && data.analysis) {
+            const match = data.analysis.match(/(\d{1,3})%/);
+            if (match) score = parseInt(match[1]);
+        }
+
+        // 5. Update UI
+        updateAlignmentUI(score);
+
+    } catch (error) {
+        console.error("Level 1 API Error:", error);
+        document.getElementById("alignmentLabel").innerText = "Error";
+    }
+}
+
+function updateAlignmentUI(score) {
+    if (score > 100) score = 100;
+    if (score < 0) score = 0;
+
+    document.getElementById("alignmentText").innerText = score + "%";
+
+    const gaugeCircle = document.querySelector("#alignmentText").previousElementSibling;
+    if (gaugeCircle) {
+        const degrees = (score / 100) * 360;
+        gaugeCircle.style.transform = `rotate(${degrees}deg)`;
+        
+        let colorClass = "border-red-500";
+        let labelText = "Needs Focus";
+        let labelColor = "bg-red-500";
+
+        if (score >= 80) {
+            colorClass = "border-green-500";
+            labelText = "High Alignment";
+            labelColor = "bg-green-500";
+        } else if (score >= 50) {
+            colorClass = "border-yellow-500";
+            labelText = "Moderate";
+            labelColor = "bg-yellow-500";
+        }
+
+        gaugeCircle.className = `absolute inset-0 rounded-full border-8 ${colorClass} border-t-transparent border-l-transparent transition-all duration-1000`;
+        
+        const labelEl = document.getElementById("alignmentLabel");
+        labelEl.innerText = labelText;
+        labelEl.className = `px-3 py-1 rounded-full ${labelColor} text-white text-xs font-bold uppercase tracking-wide`;
+    }
+}
+function generateAndStoreReviewPDF(autoDownload = false) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+  doc.setFont("Helvetica");
+
+  let y = 40;
+  const lineHeight = 16;
+  const pageHeight = doc.internal.pageSize.height - 40;
+
+  function addText(text, isTitle = false) {
+    if (y > pageHeight) {
+      doc.addPage();
+      y = 40;
+    }
+    doc.setFont(undefined, isTitle ? "bold" : "normal");
+    doc.setFontSize(isTitle ? 14 : 11);
+    const lines = doc.splitTextToSize(text, 520);
+    doc.text(lines, 40, y);
+    y += lines.length * lineHeight + 6;
+  }
+
+  // ===== SAME CONTENT AS EXISTING PDF =====
+  addText("PROGRAM LOGIC REVIEW", true);
+  addText(" ");
+
+  addText("1. PROBLEM STATEMENT", true);
+  addText(lfaData.problem || "Not defined");
+
+  if (Array.isArray(lfaData.followUpAnswers) && lfaData.followUpAnswers.length > 0) {
+    addText("Clarifying Insights:", true);
+    lfaData.followUpAnswers.forEach((item, index) => {
+      addText(`Q${index + 1}: ${item.question}`);
+      addText(`Answer: ${item.answer}`);
+    });
+  }
+
+  addText("2. Required Actions of Stakeholders", true);
+  (lfaData.stakeholders || []).forEach(s => addText(`- ${s}`));
+
+  addText("New Practices:");
+  Object.values(lfaData.practiceChanges || {}).forEach(p => addText(`- ${p}`));
+
+  addText("3. Expected Outcomes if Problem solved", true);
+  addText(lfaData.studentOutcome || "Not defined");
+
+  addText("Success Definition:");
+  addText(lfaData.successDefinition || "Not defined");
+
+  addText("4. Evidence & Indicators for Success", true);
+  (lfaData.indicators || []).forEach(i => addText(`- ${i.text}`));
+
+  // AI SUMMARY (DOM based – review.html has it)
+  addText("AI REVIEW SUMMARY", true);
+
+// Strengths
+addText("Strengths", true);
+document.querySelectorAll("#aiStrengths li").forEach(li =>
+  addText(`- ${li.innerText}`)
+);
+
+// Attention
+addText("Attention", true);
+document.querySelectorAll("#aiGaps li").forEach(li =>
+  addText(`- ${li.innerText}`)
+);
+
+// Suggestions
+addText("Suggestions", true);
+document.querySelectorAll("#aiSuggestions li").forEach(li =>
+  addText(`- ${li.innerText}`)
+);
+
+// Overall Verdict
+addText("Overall Verdict", true);
+document.querySelectorAll("#aiVerdict li").forEach(li =>
+  addText(`- ${li.innerText}`)
+);
+
+
+  // Alignment
+  const alignmentScore = document.getElementById("alignmentText")?.innerText || "N/A";
+  const alignmentLabel = document.getElementById("alignmentLabel")?.innerText || "N/A";
+  addText(`Score: ${alignmentScore}`);
+  addText(`Status: ${alignmentLabel}`);
+
+  // ===== STORE PDF =====
+  const pdfBase64 = doc.output("datauristring");
+sessionStorage.setItem("reviewPDF", pdfBase64);
+}
+
+
+// END OF SCRIPT
 </script>
 
 </body>
