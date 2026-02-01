@@ -6,6 +6,7 @@
   <title>Export LFA | ShikshaManthan</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -59,7 +60,7 @@
     </p>
   </section>
 
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <section class="flex justify-center">
 
     <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:border-indigo-300 transition-all duration-300 group flex flex-col items-center text-center animate-card" style="animation-delay: 0.1s;">
       <div class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform shadow-sm">
@@ -69,34 +70,9 @@
       <p class="text-sm text-slate-500 mb-6 flex-grow">
         Best for sharing a locked, professional version with external funders.
       </p>
-      <button onclick="downloadPDF()" class="w-full py-3 rounded-xl border-2 border-slate-100 text-slate-600 font-semibold hover:border-red-500 hover:bg-red-50 hover:text-red-600 transition-colors">
-        Download PDF
-      </button>
-    </div>
-
-    <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:border-indigo-300 transition-all duration-300 group flex flex-col items-center text-center animate-card" style="animation-delay: 0.2s;">
-      <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform shadow-sm">
-        📝
-      </div>
-      <h3 class="text-xl font-bold text-slate-800 mb-2">Download Word Doc</h3>
-      <p class="text-sm text-slate-500 mb-6 flex-grow">
-        Best for internal teams who need to edit or refine the text further.
-      </p>
-      <button onclick="downloadDoc()" class="w-full py-3 rounded-xl border-2 border-slate-100 text-slate-600 font-semibold hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-        Download .DOCX
-      </button>
-    </div>
-
-    <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:border-indigo-300 transition-all duration-300 group flex flex-col items-center text-center animate-card" style="animation-delay: 0.3s;">
-      <div class="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform shadow-sm">
-        🔗
-      </div>
-      <h3 class="text-xl font-bold text-slate-800 mb-2">Share Live Link</h3>
-      <p class="text-sm text-slate-500 mb-6 flex-grow">
-        Generate a public link for reviewers to comment directly on this page.
-      </p>
-      <button onclick="generateLink()" class="w-full py-3 rounded-xl border-2 border-slate-100 text-slate-600 font-semibold hover:border-indigo-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
-        Copy Link
+      <button onclick="downloadReviewText()"
+          class="px-6 py-3 rounded-full bg-slate-800 text-white font-bold shadow hover:bg-slate-900 transition">
+          Download Review (as pdf)
       </button>
     </div>
 
@@ -147,38 +123,111 @@ fetch("components/header.html")
     if(typeof setProgress === 'function') setProgress(100);
   });
 
+//   function downloadReviewText() {
+//   const { jsPDF } = window.jspdf;
+//   const doc = new jsPDF({ unit: "pt", format: "a4" });
+
+//   let y = 40;
+//   const lineHeight = 16;
+//   const pageHeight = doc.internal.pageSize.height - 40;
+
+//   function addText(text, isTitle = false) {
+//     if (y > pageHeight) {
+//       doc.addPage();
+//       y = 40;
+//     }
+//     doc.setFont("Helvetica", isTitle ? "bold" : "normal");
+//     doc.setFontSize(isTitle ? 14 : 11);
+
+//     const lines = doc.splitTextToSize(text, 520);
+//     doc.text(lines, 40, y);
+//     y += lines.length * lineHeight + 6;
+//   }
+
+//   // ===== CONTENT =====
+//   addText("PROGRAM LOGIC REVIEW", true);
+//   addText(" ");
+
+//   addText("1. PROBLEM STATEMENT", true);
+//   addText(lfaData.problem || "Not defined");
+
+//   if (Array.isArray(lfaData.followUpAnswers)) {
+//     addText("Clarifying Insights:", true);
+//     lfaData.followUpAnswers.forEach((item, i) => {
+//       addText(`Q${i + 1}: ${item.question}`);
+//       addText(`Answer: ${item.answer}`);
+//     });
+//   }
+
+//   addText("2. Required Actions of Stakeholders", true);
+//   (lfaData.stakeholders || []).forEach(s => addText(`- ${s}`));
+
+//   addText("New Practices:");
+//   Object.values(lfaData.practiceChanges || {}).forEach(p => addText(`- ${p}`));
+
+//   addText("3. Expected Outcomes", true);
+//   addText(lfaData.studentOutcome || "Not defined");
+
+//   addText("Success Definition:");
+//   addText(lfaData.successDefinition || "Not defined");
+
+//   addText("4. Indicators", true);
+//   (lfaData.indicators || []).forEach(i => addText(`- ${i.text}`));
+
+//   addText("EXPORT NOTES", true);
+//   addText(lfaData.exportComment || "—");
+
+//   doc.save("Program_Logic_Review.pdf");
+// }
+
+function downloadReviewText() {
+  const pdfData = sessionStorage.getItem("reviewPDF");
+
+  if (!pdfData) {
+    alert("Please export from Review page first.");
+    return;
+  }
+
+  const a = document.createElement("a");
+  a.href = pdfData;
+  a.download = "Program_Logic_Review.pdf";
+  a.click();
+}
+
+
+
 // 2. EXPORT FUNCTIONS (Mock)
-function downloadPDF() {
-  // Hackathon demo interaction
-  const btn = event.target;
-  const originalText = btn.innerText;
-  btn.innerText = "Generating PDF...";
-  setTimeout(() => {
-      alert("📄 PDF Export simulated!\n(Backend integration required for file generation)");
-      btn.innerText = originalText;
-  }, 800);
-}
+// function downloadPDF() {
+//   // Hackathon demo interaction
+//   const btn = event.target;
+//   const originalText = btn.innerText;
+//   btn.innerText = "Generating PDF...";
+//   setTimeout(() => {
+//       alert("📄 PDF Export simulated!\n(Backend integration required for file generation)");
+//       btn.innerText = originalText;
+//   }, 800);
+// }
 
-function downloadDoc() {
-  const btn = event.target;
-  const originalText = btn.innerText;
-  btn.innerText = "Creating Doc...";
-  setTimeout(() => {
-      alert("📝 Word Doc Export simulated!\n(Backend integration required for file generation)");
-      btn.innerText = originalText;
-  }, 800);
-}
+// function downloadDoc() {
+//   const btn = event.target;
+//   const originalText = btn.innerText;
+//   btn.innerText = "Creating Doc...";
+//   setTimeout(() => {
+//       alert("📝 Word Doc Export simulated!\n(Backend integration required for file generation)");
+//       btn.innerText = originalText;
+//   }, 800);
+// }
 
-function generateLink() {
-  const btn = event.target;
-  const originalText = btn.innerText;
-  btn.innerText = "Copied!";
-  navigator.clipboard.writeText("https://shikshamanthan.app/review/share/12345");
-  setTimeout(() => {
-      alert("🔗 Review link copied to clipboard:\nhttps://shikshamanthan.app/review/share/12345");
-      btn.innerText = originalText;
-  }, 500);
-}
+// function generateLink() {
+//   const btn = event.target;
+//   const originalText = btn.innerText;
+//   btn.innerText = "Copied!";
+//   navigator.clipboard.writeText("https://shikshamanthan.app/review/share/12345");
+//   setTimeout(() => {
+//       alert("🔗 Review link copied to clipboard:\nhttps://shikshamanthan.app/review/share/12345");
+//       btn.innerText = originalText;
+//   }, 500);
+// }
 
 // 3. LOGIC
 function saveComment(text) {
