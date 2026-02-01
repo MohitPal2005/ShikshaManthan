@@ -52,15 +52,15 @@
       <div class="mb-6">
         <div class="flex items-center gap-3 mb-2">
           <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wide">Level 2</span>
-          <span class="text-slate-400 text-sm font-medium">Student Impact</span>
+          <span class="text-slate-400 text-sm font-medium">Stakeholder-Impact</span>
         </div>
         
         <h1 id="aiQuestion" class="text-2xl sm:text-3xl font-bold text-slate-800 leading-tight transition-all duration-300">
-          What change do you want to see for students?
+          What change do you want to see for stakeholdres?
         </h1>
         
         <p id="aiSubtext" class="text-slate-500 mt-2 text-sm sm:text-base transition-all duration-300">
-          If this problem is addressed, what will students be able to do differently?
+          If this problem is addressed, what will stackholdres be able to do differently?
         </p>
       </div>
 
@@ -68,7 +68,7 @@
         <textarea
           id="outcomeInput"
           rows="6"
-          placeholder="Example: Students will be able to read grade-level text fluently with understanding."
+          placeholder="Example: if Stakeholder is student then will be able to read grade-level text fluently with understanding."
           class="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-inner"
           oninput="handleAIFlow(this.value)"
         ></textarea>
@@ -82,7 +82,7 @@
         <div>
           <h4 class="font-semibold text-indigo-900 text-sm mb-2">Outcome Checklist</h4>
           <ul id="tipsList" class="space-y-1.5 text-sm text-slate-600">
-            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Focus on student ability or behaviour</li>
+            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Focus on stakeholders ability or behaviour</li>
             <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Outcome should be observable or measurable</li>
             <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></span> Avoid activities like training or workshops</li>
           </ul>
@@ -137,7 +137,7 @@
             <div class="h-1 w-10 bg-indigo-100 mx-auto rounded-full my-3"></div>
             
             <div id="aiFeedback" class="text-sm text-slate-500 italic min-h-[3rem] transition-colors duration-300">
-            "I'm checking if the outcome is student-focused and measurable..."
+            "I'm checking if the outcome is stakeholders-focused and measurable..."
             </div>
         </div>
 
@@ -201,121 +201,77 @@ let ai = {
 };
 
 /* ================= CORE AI FLOW ================= */
-
 function handleAIFlow(text) {
   text = text.trim();
   lfaData.studentOutcome = text;
   
   // UI References
   const aiFace = document.getElementById("aiFace");
-  const aiPulse = document.getElementById("aiPulse");
   const statusBadge = document.getElementById("statusBadge");
 
-  // Default Thinking State
-  statusBadge.innerText = "Analyzing...";
-  statusBadge.className = "absolute bottom-4 right-4 text-xs font-medium text-indigo-500 transition-colors";
-  aiPulse.classList.add("ai-thinking");
+  // Reset Score Visuals to 0 while typing (User request)
+  document.getElementById("clarityBar").style.width = "0%";
+  document.getElementById("scoreText").innerText = "0%";
 
-  // 1. Too Vague
-  if (text.length < 20) {
+  // Default State
+  statusBadge.innerText = "Listening...";
+  statusBadge.className = "absolute bottom-4 right-4 text-xs font-medium text-slate-400";
+  
+  // 1. Text is too short (< 60 chars)
+  if (text.length < 60) {
     ai.stage = 1;
-    ai.understanding = 10;
+    ai.understanding = 0; // Keep internal score 0
 
     updateUI(
       "What change do you want to see for students?",
       "Describe a clear student-level change",
       [
         "Think about what students will be able to do",
-        "Avoid mentioning activities or interventions"
+        "Minimum 60 characters required"
       ],
-      "⚠️ Outcome is too vague. Keep typing..."
+      "✏️ Keep typing... (Minimum 60 characters)"
     );
 
+    // Ensure visual is neutral
+    document.getElementById("aiFace").innerText = "🤔";
+    
+    // Lock 'Continue' (Next Level) until they submit successfully
     lockContinue();
-    updateVisuals(10, "🤔"); // Thinking
     return;
   }
 
-  // 2. Activity Detected (Bad)
+  // 2. Activity Detected (Bad Practice Check)
   if (
     text.toLowerCase().includes("training") ||
     text.toLowerCase().includes("workshop") ||
     text.toLowerCase().includes("session")
   ) {
-    ai.stage = 1;
-    ai.understanding = 20;
-
     updateUI(
-      "What change do you want to see for students?",
       "Focus on student ability, not activities",
+      "Avoid words like 'training' or 'workshop'",
       [
         "Outcome should describe student behaviour",
-        "Avoid words like training or workshop"
+        "Don't describe what the teacher does"
       ],
-      "🚫 This sounds like an activity (training/workshop), not a student outcome."
+      "🚫 This sounds like an activity, not a student outcome."
     );
-
-    lockContinue();
-    updateVisuals(20, "🙅‍♂️"); // No gesture
+    document.getElementById("aiFace").innerText = "🙅‍♂️";
     return;
   }
 
-  // 3. Measurable but unclear (Mid)
-  if (text.length >= 20 && text.length < 70) {
-    ai.stage = 2;
-    // Dynamic score based on length
-    let score = 20 + Math.floor(((text.length - 20) / 50) * 40); 
-    ai.understanding = score;
-
-    updateUI(
-      "How will this change be observed?",
-      "For example: accuracy, confidence, fluency, participation",
-      [
-        "Add how the change will be noticed",
-        "How will you measure this improvement?"
-      ],
-      "🟡 Good start. Now, make it measurable (how will you see it?)"
-    );
-
-    lockContinue();
-    updateVisuals(score, "🧐"); // Monocle/Checking
-    return;
-  }
-
-  // 4. Clear & Measurable (Success)
-  if (text.length >= 70) {
-  ai.stage = 3;
-  ai.understanding = 100;
-
-  aiPulse.classList.remove("ai-thinking");
-
+  // 3. Ready to Submit (>= 60 chars)
+  // We do NOT generate a score here. We just say "Ready".
   updateUI(
-    "Student-level outcome looks clear",
-    "AI is validating achievability and measurability...",
+    "Ready to Verify",
+    "Click 'Submit' to get your Clarity Score",
     [
-      "Outcomes must describe student-level-change",
-      "Outcome should be observable or measurable"
+      "Outcomes must describe student-level change",
+      "Outcome should be observable"
     ],
-    "🤖 Evaluating outcome..."
+    "👇 Click 'Submit' to calculate score"
   );
-
-  unlockContinue();
-  updateVisuals(100, "🤩");
-
-  // 🔥 CALL BACKEND LLM
-  callOutcomeEvaluator(lfaData.problem, text).then(result => {
-    document.getElementById("aiFeedback").innerText = result;
-
-    // Extract percentage
-    const match = result.match(/(\d+)%/);
-    if (match) {
-      const score = parseInt(match[1]);
-      document.getElementById("clarityBar").style.width = score + "%";
-      document.getElementById("scoreText").innerText = score + "%";
-    }
-  });
-}
-
+  
+  document.getElementById("aiFace").innerText = "👍";
 }
 
 /* ================= UI UPDATES ================= */
@@ -393,10 +349,10 @@ function lockContinue() {
 /* ================= NAV ================= */
 
 function saveAndNext() {
-  if (ai.understanding < 100) {
-    alert("AI is still refining the student outcome.");
-    return;
-  }
+  // if (ai.understanding < 100) {
+  //   alert("AI is still refining the student outcome.");
+  //   return;
+  // }
 
   saveData();
   window.location.href = "level3.html";
@@ -422,21 +378,34 @@ async function submitOutcome() {
   const problem = lfaData.problem;
   const outcome = document.getElementById("outcomeInput").value.trim();
 
+  // --- VALIDATION START ---
+  
+  // 1. Check Level 1 completion
   if (!problem || problem.length < 20) {
     alert("Teacher problem is missing. Please complete Level 1.");
     return;
   }
 
-  if (outcome.length < 20) {
-    alert("Please write a clear student outcome before submitting.");
+  // 2. NEW RULE: Check for 60 characters
+  if (outcome.length < 60) {
+    alert("Please write at least 60 characters."); // The Popup
     return;
   }
 
-  // UI feedback
-  document.getElementById("aiFeedback").innerText =
-    "🤖 Evaluating outcome achievability...";
+  // --- VALIDATION END ---
+
+  // UI Setup: Show loading
+  const submitBtn = document.querySelector("button[onclick='submitOutcome()']");
+  const aiFeedback = document.getElementById("aiFeedback");
+  
+  aiFeedback.innerText = "🤖 Calculating Clarity Score...";
+  aiFeedback.className = "text-sm font-semibold text-indigo-600 animate-pulse";
+  
+  submitBtn.disabled = true; 
+  submitBtn.innerText = "Calculating...";
 
   try {
+    // 1. CALL BACKEND
     const res = await fetch("https://shivam-99x-shikshamanthan-backend.hf.space/evaluate-outcome", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -448,21 +417,44 @@ async function submitOutcome() {
 
     const data = await res.json();
 
-    // Show LLM response
-    document.getElementById("aiFeedback").innerText = data.evaluation;
+    // 2. Update Feedback Text
+    aiFeedback.innerText = data.evaluation;
+    
+    // Style the feedback text based on content
+    if(data.evaluation.includes("✅")) aiFeedback.className = "text-sm font-semibold text-green-600";
+    else if(data.evaluation.includes("🚫")) aiFeedback.className = "text-sm font-semibold text-red-500";
+    else aiFeedback.className = "text-sm text-slate-600";
 
-    // Extract percentage from LLM text
+    // 3. PARSE & SHOW CLARITY SCORE (Only happens here)
     const match = data.evaluation.match(/(\d+)%/);
     if (match) {
       const score = parseInt(match[1]);
+      
+      // Update the Global Variable
+      ai.understanding = score; 
+      
+      // Update the UI Bar (This is the moment the score appears)
       document.getElementById("clarityBar").style.width = score + "%";
       document.getElementById("scoreText").innerText = score + "%";
+      document.getElementById("aiFace").innerText = score > 70 ? "🤩" : "🧐";
+      
+      // 4. Unlock 'Continue' only if score is high enough
+      if (score > 70) {
+          unlockContinue();
+      } else {
+          lockContinue();
+          // Optional: alert("Score is too low. Please refine.");
+      }
     }
 
   } catch (err) {
-    document.getElementById("aiFeedback").innerText =
-      "❌ Could not connect to evaluation service.";
+    aiFeedback.innerText = "❌ Connection Error. Please try again.";
+    aiFeedback.className = "text-sm font-bold text-red-600";
     console.error(err);
+  } finally {
+    // Reset Button
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Submit";
   }
 }
 
