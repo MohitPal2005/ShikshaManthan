@@ -271,7 +271,7 @@ function createIndicatorBox(indicator, index) {
   const outcomeText = lfaData.studentOutcome || "Student Outcome (Defined in Level 2)";
   const truncatedOutcome = outcomeText.length > 50 ? outcomeText.substring(0, 50) + "..." : outcomeText;
 
-  const wordCount = indicator.text ? indicator.text.trim().split(/\s+/).filter(w => w.length > 0).length : 0;
+  const wordCount = 0;
   const wordColor = wordCount >= 10 ? "text-green-600" : "text-slate-400";
 
   box.innerHTML = `
