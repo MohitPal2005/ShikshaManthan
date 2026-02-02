@@ -320,6 +320,7 @@ function loadPatterns() {
   list.innerHTML = "";
 
   selectedStakeholders.forEach(actor => {
+    const key = actor.trim();   // ✅ IMPORTANT
     const patterns = STAKEHOLDER_PATTERNS[actor];
     if (!patterns) return;
 
