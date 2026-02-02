@@ -146,6 +146,10 @@ fetch("components/header.html")
     // Check Data
     loadData();
 
+      // ✅ ADD THIS (READ FROM LEVEL 4)
+    window.selectedStakeholders = lfaData.stakeholders || [];
+    console.log("Selected stakeholders:", selectedStakeholders);
+
     // Guard
     if (!isLevel5Complete()) {
         // Uncomment in production
@@ -290,31 +294,46 @@ function updateFeedback(msg, colorClass, emoji) {
     }
 }
 
+  // ✅ STEP 2: Stakeholder → Allowed activities
+const STAKEHOLDER_PATTERNS = {
+  "Teacher": [
+    { title: "Peer Learning", desc: "Conduct peer learning sessions with teachers" }
+  ],
+  "CRP / BRP": [
+    { title: "Classroom Observation", desc: "Invite CRP/BRP for classroom observation" }
+  ],
+  "District Officer": [
+    { title: "Report Issues", desc: "Report infrastructure and staffing issues" }
+  ],
+  "Parent": [
+    { title: "Parent Meeting", desc: "Conduct monthly parent-teacher meetings" }
+  ],
+  "SMC Member": [
+    { title: "SMC Review", desc: "Discuss school improvement plans" }
+  ]
+};
+
 /* ================= PATTERNS ================= */
 
 function loadPatterns() {
   const list = document.getElementById("patternList");
   list.innerHTML = "";
 
-  selectedStakeholders.forEach(stakeholder => {
-    const patterns = STAKEHOLDER_PATTERNS[stakeholder];
+  selectedStakeholders.forEach(actor => {
+    const patterns = STAKEHOLDER_PATTERNS[actor];
     if (!patterns) return;
 
     patterns.forEach(p => {
       const btn = document.createElement("button");
       btn.className =
-        "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors text-sm group";
+        "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm";
 
       btn.innerHTML = `
-        <div class="font-semibold text-indigo-300 group-hover:text-indigo-200">
-          ${p.title}
-        </div>
-        <div class="text-xs text-slate-400 truncate">
-          (${stakeholder}) ${p.desc}
-        </div>
+        <div class="font-semibold text-indigo-300">${p.title}</div>
+        <div class="text-xs text-slate-400">${actor}: ${p.desc}</div>
       `;
 
-      btn.onclick = () => addPattern(`${stakeholder}: ${p.desc}`);
+      btn.onclick = () => addPattern(`${actor}: ${p.desc}`);
       list.appendChild(btn);
     });
   });
