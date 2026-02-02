@@ -732,11 +732,11 @@
   }
 
   const user = localStorage.getItem("currentUser");
-  if (!user) {
-    alert("Please log in to continue.");
-    window.location.href = "index.html";
-    return;
-  }
+
+// ✅ Allow Free Trial users
+if (!user) {
+  localStorage.setItem("trialUser", "true");
+}
 
   applyContextLogic();
   saveData();
