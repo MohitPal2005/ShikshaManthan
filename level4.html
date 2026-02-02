@@ -303,8 +303,6 @@ fetch("components/header.html")
 
 window.onload = () => {
     if(typeof loadData === 'function') loadData();
-    lfaData.stakeholders = [];
-    if(typeof saveData === 'function') saveData();
     updateState();
 };
 
