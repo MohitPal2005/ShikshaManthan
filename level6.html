@@ -296,22 +296,27 @@ function loadPatterns() {
   const list = document.getElementById("patternList");
   list.innerHTML = "";
 
-  const patterns = [
-    { title: "Classroom Observation & Feedback(CRP)", desc: "I will invite CRP for classroom observation to focus on instructional challenges" },
-    { title: "Subject-Specific Mentoring (BRP)", desc: "I will connect with BRP for subject-level guidance, content clarification" },
-    { title: "Reporting to DEO", desc: "I will formally reports issues such as infrastructure gaps,workload" },
-    { title: "Parent-Teacher Meeting", desc: "I will meet parents every month to explain their child’s strengths, weaknesses" }
-  ];
+  selectedStakeholders.forEach(stakeholder => {
+    const patterns = STAKEHOLDER_PATTERNS[stakeholder];
+    if (!patterns) return;
 
-  patterns.forEach(p => {
-    const btn = document.createElement("button");
-    btn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors text-sm group";
-    btn.innerHTML = `
-        <div class="font-semibold text-indigo-300 group-hover:text-indigo-200">${p.title}</div>
-        <div class="text-xs text-slate-400 truncate">${p.desc}</div>
-    `;
-    btn.onclick = () => addPattern(p.title + ": " + p.desc);
-    list.appendChild(btn);
+    patterns.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className =
+        "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors text-sm group";
+
+      btn.innerHTML = `
+        <div class="font-semibold text-indigo-300 group-hover:text-indigo-200">
+          ${p.title}
+        </div>
+        <div class="text-xs text-slate-400 truncate">
+          (${stakeholder}) ${p.desc}
+        </div>
+      `;
+
+      btn.onclick = () => addPattern(`${stakeholder}: ${p.desc}`);
+      list.appendChild(btn);
+    });
   });
 }
 
