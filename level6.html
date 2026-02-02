@@ -320,8 +320,8 @@ function loadPatterns() {
   list.innerHTML = "";
 
   selectedStakeholders.forEach(actor => {
-    const key = actor.trim();   // ✅ IMPORTANT
-    const patterns = STAKEHOLDER_PATTERNS[actor];
+    const key = actor.trim();                 // normalize
+    const patterns = STAKEHOLDER_PATTERNS[key];
     if (!patterns) return;
 
     patterns.forEach(p => {
@@ -331,10 +331,10 @@ function loadPatterns() {
 
       btn.innerHTML = `
         <div class="font-semibold text-indigo-300">${p.title}</div>
-        <div class="text-xs text-slate-400">${actor}: ${p.desc}</div>
+        <div class="text-xs text-slate-400">${key}: ${p.desc}</div>
       `;
 
-      btn.onclick = () => addPattern(`${actor}: ${p.desc}`);
+      btn.onclick = () => addPattern(`${key}: ${p.desc}`);
       list.appendChild(btn);
     });
   });
