@@ -676,6 +676,15 @@ function generateAndStoreReviewPDF(autoDownload = false) {
 
   addText("4. Evidence & Indicators for Success", true);
   (lfaData.indicators || []).forEach(i => addText(`- ${i.text}`));
+  // ✅ ADD: Full AI Indicator Evaluation
+const aiIndicatorResponse =
+  lfaData.indicators?.[0]?.ai_full_response;
+
+if (aiIndicatorResponse) {
+  addText("AI Indicator Evaluation", true);
+  addText(aiIndicatorResponse);
+}
+
 
   // AI SUMMARY (DOM based – review.html has it)
   addText("AI REVIEW SUMMARY", true);
