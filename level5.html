@@ -170,12 +170,12 @@ function renderPracticeInputs() {
   const container = document.getElementById("practiceContainer");
   container.innerHTML = "";
 
-  lfaData.practiceChanges = lfaData.practiceChanges || {};
+  // Ensure practiceChanges is an object, but do NOT pre-fill with old data 
+  // if you want the bar to start at 0% every time the page loads.
+  lfaData.practiceChanges = {}; 
 
   lfaData.stakeholders.forEach((stakeholder, index) => {
-    // Generate Initials
     const initials = stakeholder.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
-    const existingVal = lfaData.practiceChanges[stakeholder] || "";
 
     const card = document.createElement("div");
     card.className = "group border border-slate-200 rounded-2xl p-5 bg-white shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 flex gap-4 items-start";
@@ -184,28 +184,24 @@ function renderPracticeInputs() {
       <div class="shrink-0 w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center text-sm shadow-inner mt-1">
         ${initials}
       </div>
-
       <div class="flex-grow">
         <label class="block text-sm font-bold text-slate-700 mb-1">${stakeholder}</label>
-        
         <div class="relative">
             <textarea
               rows="2"
-              placeholder="e.g. ${stakeholder} regularly observes classrooms and provides feedback..."
+              placeholder="e.g. ${stakeholder} regularly observes classrooms..."
               class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 resize-none"
               oninput="handlePracticeChange('${stakeholder}', this.value, ${index})"
               id="input-${index}"
             ></textarea>
-            
             <div id="status-${index}" class="absolute right-3 bottom-3 text-lg opacity-0 transition-opacity"></div>
         </div>
       </div>
     `;
-
     container.appendChild(card);
   });
   
-  // Initial Check if data exists
+  // Force evaluation to 0%
   evaluateState();
 }
 
