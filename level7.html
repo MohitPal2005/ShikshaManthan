@@ -492,7 +492,11 @@ async function evaluateMeasurementWithLLM() {
     
     // Also save the simple key for backward compatibility
     lfaData.measurementCheck = data.response;
-    
+    // ✅ NEW: Store full AI response INSIDE each indicator (non-destructive)
+lfaData.indicators = lfaData.indicators.map(ind => ({
+  ...ind, // keeps outcome, text, and any existing fields
+  ai_full_response: data.response
+}));
     saveData(); // Commit to LocalStorage
 
   } catch (err) {
