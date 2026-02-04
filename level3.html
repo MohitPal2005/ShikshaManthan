@@ -234,7 +234,8 @@
         // Added 'font-bold' and changed text color to darker slate (slate-800)
         aiFeedbackBox.className = "text-sm font-bold text-slate-800 mt-2 text-left ai-markdown";
         aiFeedbackBox.innerHTML = parseMarkdown(data.evaluation);
-        const match = data.evaluation.match(/Success Clarity Score \s*(\d+)%/i);
+       // Matches "Success Clarity Score", optional colon, optional space, then captures the number
+        const match = data.evaluation.match(/Success Clarity Score[:\s]*(\d+)/i);
         const aiScore = match ? parseInt(match[1]) : 0;
 
         updateScoreUI(aiScore);
