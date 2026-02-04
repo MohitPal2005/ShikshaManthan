@@ -217,7 +217,13 @@
         const res = await fetch(BACKEND_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ success_description: text })
+            // CHANGE START: Send problem and outcome along with success_description
+            body: JSON.stringify({ 
+                success_description: text,
+                problem: lfaData.problem,           // Variable from Level 1
+                outcome: lfaData.studentOutcome     // Variable from Level 2 (User defined name)
+            })
+            // CHANGE END
         });
 
         if (!res.ok) throw new Error(`Server error: ${res.status}`);
