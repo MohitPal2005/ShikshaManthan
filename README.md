@@ -59,7 +59,7 @@ Logic Gates prevent skipping steps or creating misaligned designs. Real-time AI 
 
 ## 🚀 Live Demo
 
-👉 **Demo Link:** `<your-demo-link-here>`
+👉 **Demo Link:** `https://shiksha-manthan.vercel.app/`
 
 **No installation or setup is required.**  
 Users can start a **free trial without login**; data is stored locally during the session, and PDF export is disabled.  
@@ -82,4 +82,4 @@ The platform runs directly in a web browser.
 ## 👤 Author
 
 **Mohit Pal**  
-B.Tech CSE (E-Commerce) 
+B.Tech CSE
